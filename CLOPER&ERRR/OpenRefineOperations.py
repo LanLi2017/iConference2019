@@ -1,6 +1,6 @@
 import os
 
-from ReproduciblePackage.openrefine_client.google.refine import refine
+from OR_Client_Library.openrefine_client.google.refine import refine
 
 
 def list_objects():
