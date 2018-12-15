@@ -7,25 +7,24 @@
     "op": "core/column-rename"
   }, 
   {
-    "Cluster-function": "levenshtein", 
+    "Cluster-function": "fingerprint", 
     "description": "Mass edit cells in column news", 
-    "Cluster-params": "{\"radius\":2.000000, \"blocking-ngram-size\":1}", 
     "columnName": "news", 
     "engineConfig": {
       "facets": "[]", 
       "mode": "row-based"
     }, 
     "opname": "Cluster_and_Relabel", 
-    "Cluster-type": "knn", 
+    "Cluster-type": "binning", 
     "expression": "value", 
     "op": "core/mass-edit"
   }, 
   {
     "repeat": "false", 
-    "description": "Text transform on cells in column sponsor using expression value.trim()", 
+    "description": "Text transform on cells in column news using expression value.trim()", 
     "onError": "set-to-blank", 
     "repeatCount": 10, 
-    "columnName": "sponsor", 
+    "columnName": "news", 
     "engineConfig": {
       "facets": "[]", 
       "mode": "row-based"

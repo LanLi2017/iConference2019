@@ -234,7 +234,7 @@ class Engine(object):
         return len(self.facets)
 
     def as_json(self):
-        """Return a JSON string suitable for use as a POST parameter."""
+        """Return a OR_JSON string suitable for use as a POST parameter."""
         return json.dumps({
             'facets': [f.as_dict() for f in self.facets],  # XXX how with json?
             'mode': self.mode,

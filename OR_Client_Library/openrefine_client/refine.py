@@ -79,7 +79,7 @@ group3 = optparse.OptionGroup(PARSER, 'Commands with argument [PROJECTID/PROJECT
 group3.add_option('-d', '--delete', dest='delete', action='store_true',
                   help='Delete project')
 group3.add_option('-f', '--apply', dest='apply', metavar='[FILE]',
-                  help='Apply JSON rules to OpenRefine project')
+                  help='Apply OR_JSON rules to OpenRefine project')
 group3.add_option('-E', '--export', dest='export', action='store_true',
                   help='Export project in tsv format to stdout.')
 group3.add_option('-o', '--output', dest='output', metavar='[FILE]',
@@ -161,7 +161,7 @@ def list_projects():
     projects = refine.Refine(refine.RefineServer()).list_projects().items()
 
     def date_to_epoch(json_dt):
-        """Convert a JSON date time into seconds-since-epoch."""
+        """Convert a OR_JSON date time into seconds-since-epoch."""
         return time.mktime(time.strptime(json_dt, '%Y-%m-%dT%H:%M:%SZ'))
     projects.sort(key=lambda v: date_to_epoch(v[1]['modified']), reverse=True)
     for project_id, project_info in projects:

@@ -5,6 +5,7 @@ import json
 # import sys
 # sys.path.append('/Users/barbaralee/WT-summer-2018-Lan-Li/OpenRefine3Operations/Menu_case/Python_command/Openrefine-client reproducible json/script')
 import os
+from pprint import pprint
 
 import OpenRefineOperations as OR
 
@@ -80,10 +81,6 @@ def CheckColumnName(op,projectid):
             print("column name not found, please re-enter: ")
 
 
-def create_project(projectid):
-    print(projectid)
-
-
 def main():
     result=[]
     print("Welcome to use OpenRefine userScript")
@@ -92,19 +89,15 @@ def main():
         choice=prompt_options([
             'List Projects',
             'Create Project',
-            'Open Project',
             'Get Project Name',
             'Exit',
         ])
         if choice==1:
-            OR.list_objects()
+            project_id=OR.list_objects()
+            pprint(project_id)
         elif choice==3:
-            userinputID=raw_input("input the project ID:")
-            OR.open_project(userinputID)
-            if Confirm('Do you want to continue this data cleaning work?', default=False):
-               create_project(userinputID)
-            # f.write('Open Project')
-        elif choice==4:
+            project_id_list=OR.get_project_id()
+            pprint(project_id_list)
             usergetprojectID=raw_input("input the project ID:")
             projectname=OR.get_project_name(usergetprojectID)
             print(projectname)
@@ -170,20 +163,25 @@ def main():
                             ClusterRelabeldicts['Cluster-type']='binning'
                             userFunction=prompt_options([
                                 'fingerprint',
+                                'ngram-fingerprint',
                                 'metaphone3',
                                 'cologne-phonetic',
                             ])
                             if userFunction==1:
                                 ClusterRelabeldicts['Cluster-function']='fingerprint'
-                                params=raw_input("Enter the params:")
+                                result.append(ClusterRelabeldicts)
+                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='fingerprint')
+                            elif userFunction==2:
+                                ClusterRelabeldicts['Cluster-function']='ngram-fingerprint'
+                                params=raw_input("Enter the params for Ngram size:")
                                 ClusterRelabeldicts['Cluster-params']='%s'%params
                                 result.append(ClusterRelabeldicts)
                                 compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='ngram-fingerprint',params=params)
-                            elif userFunction==2:
+                            elif userFunction==3:
                                 ClusterRelabeldicts['Cluster-function']='metaphone3'
                                 result.append(ClusterRelabeldicts)
                                 compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='metaphone3')
-                            elif userFunction==3:
+                            elif userFunction==4:
                                 ClusterRelabeldicts['Cluster-function']='cologne-phonetic'
                                 result.append(ClusterRelabeldicts)
                                 compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='cologne-phonetic')
@@ -347,9 +345,9 @@ def main():
                         if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                             break
                 usercolumn=CheckColumnName('Data Cleaning',projectID)
-        elif choice==5:
+        elif choice==4:
             if Confirm("Are you sure to exit?",default=False):
-                with open('EnhancedRecipe.json','wt')as f:
+                with open('Enhanced_JSON/EnhancedRecipe.json','wt')as f:
                     json.dump(result,f,indent=2)
                 break
 

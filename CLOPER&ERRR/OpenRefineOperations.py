@@ -24,6 +24,10 @@ def get_project_name(project_id):
     return refine.Refine(refine.RefineServer()).get_project_name(project_id)
 
 
+def get_project_id():
+    # get the project id
+    return refine.Refine(refine.RefineServer()).get_project_id()
+
 def project_name(project_id):
     # functions in RefineProject:
     # project_name
@@ -41,7 +45,7 @@ def do_raw(project_id,command,data):
 
 
 def do_json(project_id,command,data):
-    # do_json: issue a command to the server, parse & return encoded JSON.
+    # do_json: issue a command to the server, parse & return encoded OR_JSON.
     return refine.RefineProject(refine.RefineServer(),project_id).do_json(command,data)
 
 
@@ -53,7 +57,7 @@ def get_models(project_id):
 
 
 def get_preference(project_id,name):
-    # get preference: returns the (JSON) value of a given preference setting.
+    # get preference: returns the (OR_JSON) value of a given preference setting.
     return refine.RefineProject(refine.RefineServer(),project_id).get_preference(name)
 
 
@@ -229,7 +233,7 @@ def input_path_convenient(prompt):
 def main():
     userinputpath=input_path_convenient('please input CSV name:')
     userinputname=raw_input('please input new project name:')
-    userinputjson=input_path_convenient('please input JSON name:')
+    userinputjson=input_path_convenient('please input OR_JSON name:')
     project_id=create_project(userinputpath,userinputname)
     print(project_id)
     # test apply json file

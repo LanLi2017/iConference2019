@@ -94,7 +94,7 @@ class RefineServer(object):
         return response
 
     def urlopen_json(self, *args, **kwargs):
-        """Open a OpenRefine URL, optionally POST data, and return parsed JSON."""
+        """Open a OpenRefine URL, optionally POST data, and return parsed OR_JSON."""
         response = json.loads(self.urlopen(*args, **kwargs).read())
         if 'code' in response and response['code'] not in ('ok', 'pending'):
             error_message = ('server ' + response['code'] + ': ' +
@@ -141,6 +141,14 @@ class Refine:
         """Returns project name given project_id."""
         projects = self.list_projects()
         return projects[project_id]['name']
+
+    def get_project_id(self):
+        """Returns project id given project id"""
+        projects=self.list_projects()
+        project_id=[]
+        for key,value in projects.iteritems():
+            project_id.append(key)
+        return project_id
 
     def open_project(self, project_id):
         """Open a OpenRefine project."""
@@ -278,7 +286,7 @@ class RefineProject:
                                    data=data)
 
     def do_json(self, command, data=None, include_engine=True):
-        """Issue a command to the server, parse & return decoded JSON."""
+        """Issue a command to the server, parse & return decoded OR_JSON."""
         if include_engine:
             if data is None:
                 data = {}
@@ -314,7 +322,7 @@ class RefineProject:
         return response
 
     def get_preference(self, name):
-        """Returns the (JSON) value of a given preference setting."""
+        """Returns the (OR_JSON) value of a given preference setting."""
         response = self.server.urlopen_json('get-preference',
                                             params={'name': name})
         return json.loads(response['value'])
