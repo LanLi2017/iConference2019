@@ -28,7 +28,7 @@ This prototype requires Python version 2.7. To determine the version of Python i
       Type "help", "copyright", "credits" or "license" for more information.
       >>>
       
-Instructions for installing Python may be found at [https://www.python.org/downloads/].
+Instructions for installing Python may be found at **[Python Download Website](https://www.python.org/downloads/)**.
 
 ### 2. Project directory layout
 
@@ -36,7 +36,7 @@ The directories and the descriptions are listed below:
 
 Directory            | Description
 ---------------------|-----------
-OR_Client_Library    | The OpenRefine Python Client Library provides an interface to communicating with an `OpenRefine        <http://openrefine.org/>`_ server.
+OR_Client_Library    | The OpenRefine Python Client Library provides an interface to communicating with an [OpenRefine](http://openrefine.org/) server.
 src/main/resources   | Resource files to be packaged with production code.
 src/test/java        | Source code for unit and functional tests. Not included in packaged distributions.
 src/test/resources   | Resource files available to tests. Not included in packaged distributions.
