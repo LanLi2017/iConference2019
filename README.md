@@ -1,5 +1,8 @@
-iConference2019 Towards More Reproducible Data Wrangling with OpenRefine
-========================================================================
+iConference2019 
+================
+
+### Towards More Reproducible Data Wrangling with OpenRefine
+
 
 Overview
 ========
