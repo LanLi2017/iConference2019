@@ -13,7 +13,12 @@ OpenRefine (OR) is a popular data wrangling tool. During data cleaning , not onl
 
 Prototype
 =========
+The prototype includes two sub-systems. 
+Command-Line OpenRefine Prototype for Enhanced Recipe （CLOPER） (see Fig 3.CLOPER}) aims to enhance transparency and reusability of the native OR recipe, which reads in the original "messy" dataset ('''d1.csv''') and communicates with an OR server through the interface provided by the OR-client. The outputs consist of three products: an enhanced recipe ($EnhancedRecipe.JSON$) is generated at the back-end; a "cleaned" dataet ('d2.csv') and a native OR recipe ($NativeORRecipe.JSON$) are exported from the OR web UI. 
+\subsection{Enhanced Recipe Re-Runner}
+In regards to reproducibility, ERRR (see Fig.~\ref{fig4}) re-implements the enhanced recipe ($EnhancedRecipe.JSON$) that is derived from CLOPER, applies to the same original "messy" dataset ($d1.csv$). Again ERRR connects to an OR server via OR-client and obtains the same output ($d2.csv$) associated with the native OR recipe ($NativeORRecipe.JSON$).
 
+A subset of the OR operations (e.g., \ywa{\emph{Cluster and edit}}, \ywa{\emph{To lowercase}}, \ywa{\emph{To date}} , etc.) were used to test both sub-systems of the proposed prototype. The results showed that the enhanced OR recipe improved the transparency, reproducibility and reusability compared to the native OR recipe. 
 
 
 Run prototype on your own computer
