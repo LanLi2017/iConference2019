@@ -41,7 +41,8 @@ Run prototype on your own computer
 
 To take advantage of all of the sub-systems in the prototype, you need install the software on your computer
 
-# 1. Check installed version of Python
+1.Check installed version of Python
+---
 
 This prototype requires Python version 2.7. To determine the version of Python installed on your computer use the version option to the python command. For example,
 
@@ -54,8 +55,8 @@ This prototype requires Python version 2.7. To determine the version of Python i
       
 Instructions for installing Python may be found at **[Python Download Website](https://www.python.org/downloads/)**.
 
-# 2. Project directory layout
-
+2.Project directory layout
+----
 The directories and the descriptions are listed below:
 
 Directory                             | Description
