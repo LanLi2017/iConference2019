@@ -9,8 +9,9 @@ Overview
 
 OpenRefine (OR) is a popular data wrangling tool. During data cleaning , not only a processed dataset will be generated but also some other provenance-related byproducts. One of them is a native OR recipe (JSON file), and the other one is the Operation History (OH) that lists a series of human-readable data cleaning steps, both of which promote research transparency to some extent by containing some (but incomplete) prospective provenance and partial retrospective provenance information <sup>1</sup>, making them difficult to be directly used for reuse and Reproducibility from OpenRefine Web API. In this poster, a prototype consisting of two sub-systems, one of which extends the native OR recipe to generate a complete recipe (a.k.a. enhanced receipt)  followed by the second re-runner system, is created to complement the missing information between the actual data cleaning operations and the native OR recipe, which meanwhile facilitates transparency, reproducibility and reusability.
 
-
-<img src="https://github.com/LanLi2017/iConference2019/blob/master/README/PNG/DC.png" title="Fig 3.CLOPER" width="500" height="350">
+<p align="center">
+     <img src="https://github.com/LanLi2017/iConference2019/blob/master/README/PNG/DC.png" title="Fig 3.CLOPER" width="500" height="350"/>
+</p>
 
 
 Prototype
