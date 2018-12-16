@@ -37,7 +37,8 @@ In regards to reproducibility, ERRR re-implements the enhanced recipe (EnhancedR
 </p>
 
 Run prototype on your own computer
-----------------------------------
+====
+
 
 To take advantage of all of the sub-systems in the prototype, you need install the software on your computer
 
