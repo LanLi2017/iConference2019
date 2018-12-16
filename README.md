@@ -24,10 +24,10 @@ CLOPER aims to enhance transparency and reusability of the native OR recipe, whi
 In regards to reproducibility, ERRR re-implements the enhanced recipe (EnhancedRecipe.JSON) that is derived from CLOPER, applies to the same original "messy" dataset (`d1.csv`). Again ERRR connects to an OR server via OR-client and obtains the same output (`d2.csv`) associated with the native OR recipe (`NativeORRecipe.JSON`).
 
 
-<img src="https://github.com/LanLi2017/iConference2019/blob/master/README/PNG/CLOPER.png" width="400" height="150">
+<img src="https://github.com/LanLi2017/iConference2019/blob/master/README/PNG/CLOPER.png" width="400" height="250">
 
 
-<img src="https://github.com/LanLi2017/iConference2019/blob/master/README/PNG/ERRR.png" width="400" height="150">
+<img src="https://github.com/LanLi2017/iConference2019/blob/master/README/PNG/ERRR.png" width="400" height="250">
 
 
 Run prototype on your own computer
