@@ -54,7 +54,9 @@ University of Waterloo, 200 University Ave W, Waterloo ON N2L 3G1, Canada
   prospective and retrospective provenance information, respectively. We propose to complete the
   missing information by capturing names and parameters of user-invoked functions, and by exposing
   retrospective provenance hidden in internal project files. The feasibility of the approach is
-  demonstrated with an early prototype.  \keywords{OpenRefine \and data cleaning \and provenance \and transparency \and reproducibility \and reusability} \end{abstract}
+  demonstrated with an early prototype.  
+\keywords{OpenRefine \and data cleaning \and provenance \and transparency \and reproducibility \and
+  reusability} \end{abstract} 
 
 \section{Introduction}
 
@@ -68,9 +70,15 @@ representations, OpenRefine employs powerful clustering methods (\emph{key colli
 Consider an output dataset $D' = W(D)$ resulting from the application of a user-defined data
 cleaning workflow $W$ on an input dataset $D$ (often a CSV file). The goal of $W$ is that the output
 $D'$ has better \emph{data quality} (is ``cleaner'') than the input $D$ and that $D'$ is ``fit for
-use'' \cite{wang1996accuracy,sadiq2013handbook}.
+use'' \cite{defeo2017juran,wang1996accuracy,sadiq2013handbook}.
 
-While working on a data cleaning project, a user's linear \emph{operation history} $H$ provides a high-level, human-readable overview of the sequence of steps performed and can be used to undo and redo operations. In addition, the user can extract all or parts of the operation history to obtain a \emph{recipe} $R$ in machine-readable JSON format. This JSON recipe $R$ can then be \emph{reused} on datasets similar to $D$. The history $H$ and its companion recipe $R$ thus provide valuable \emph{provenance} information about $W$. The following are important requirements or desiderata for workflows and provenance artifacts: 
+While working on a data cleaning project, a user's linear \emph{operation history}~$H$ provides a
+high-level, human-readable overview of the sequence of steps performed and can be used to undo and
+redo operations. In addition, the user can extract all or parts of the operation history to obtain a
+\emph{recipe} $R$ in machine-readable JSON format. This JSON recipe $R$ can then be \emph{reused} on
+datasets similar to $D$. The history $H$ and its companion recipe $R$ thus provide valuable
+\emph{provenance} information about $W$. The following are important requirements and desiderata for
+workflows and provenance artifacts:
 
 \begin{itemize}
 \item  \emph{Transparency.} A skeptical data cleaning customer should be able to explain how $D'$ was obtained from $D$, i.e., what operations were performed on what parts of $D$ and in what order. This is the classical domain of provenance.
@@ -78,7 +86,7 @@ While working on a data cleaning project, a user's linear \emph{operation histor
 \item 
 \emph{Reusability.} It should be ``easy'' to apply $I_W$ to other datasets $E$ that are ``similar
 enough'' to $D$ to obtain a ``cleaner'' $E'$. This notion is necessarily vague, given that
-the underlying notions have to be prescribed first. 
+the underlying notions have to be made precise first. 
 \end{itemize}
 
 \begin{figure}[t]
@@ -96,16 +104,16 @@ the underlying notions have to be prescribed first.
 
 We distinguish \emph{prospective provenance} which is the specification of a workflow $W$ or at
 least of $W$'s dataflow dependencies, and \emph{retrospective provenance} which records runtime
-observables used to instantiate $W$. In OpenRefine the user workflow $W$ is partially captured in
-the operation history $H$ and the associated recipe~$R$, which can thus serve as an implementation
-$I_W$. However, as illustrated in Figure~\ref{fig:missing}, $R$ is \emph{incomplete}: If the user
-chose a \emph{Cluster \& Edit} method, e.g., \emph{key collision} with $n$-gram \emph{fingerprint}
-function for $n=3$, then $R$ only captures rules $\{$\texttt{from}:\emph{old} $\to$
-\texttt{to}:\emph{new}$\}$, but not the method, function, or parameters. Thus prospective provenance
-is lost and reusability diminished. If the user performs a \emph{single cell edit}, say fixing
-umlauts in a particular cell, then this ``one-off'' is not considered a reusable operation and
-(understandably) omitted from the recipe $R$. However an important piece of retrospective provenance
-is lost this way, reducing transparency and preventing reproducibility of $W$ via $R$.
+observables of runs (i.e., instances) of $W$. In OpenRefine the user workflow $W$ is partially
+captured in the operation history $H$ and the associated recipe~$R$, which can thus serve as a (partial)
+implementation $I_W$. However, as illustrated in Figure~\ref{fig:missing}, $R$ is \emph{incomplete}:
+If the user chose a \emph{Cluster \& Edit} method, e.g., \emph{key collision} with $n$-gram
+\emph{fingerprint} function (for $n=3$) then $R$ only captures rules $\{$\texttt{from}:\emph{old}
+$\to$ \texttt{to}:\emph{new}$\}$, but not the method, function, or parameters. Thus prospective
+provenance is lost and reusability diminished. If the user performs a \emph{single cell edit}, say
+fixing umlauts in a particular cell, then this ``one-off'' is not considered a reusable operation
+and (understandably) omitted from the recipe $R$. However an important piece of retrospective
+provenance is lost this way, reducing transparency and preventing reproducibility of $W$ via $R$.
 
 
 \section{Approach and Demonstration}\label{sec:appr-prot-demonstr}
@@ -134,7 +142,7 @@ made explicit (Figure~\ref{fig-archives}).
  
 To demonstrate our approach we have developed CLOPER (Command-Line OpenRefine Prototype for Enhanced
 Recipes) and ER3 (Enhanced Recipe Re-Runner) \cite{ORtools2018}, both of which use a Python client
-library \cite{makepeace18ORclient} to communicate with the OpenRefine server. CLOPER can execute
+library \cite{makepeace18ORclient} to communicate with an OpenRefine server. CLOPER can execute
 OpenRefine operations via a command-line driven interface (i.e., without a GUI) and adds missing
 prospective information to recipes (Figure~\ref{fig-CLOPER-ER3}). ER3 can then run those enhanced
 recipes and demonstrate the improved transparency, reproducibility, and reusability. Further
