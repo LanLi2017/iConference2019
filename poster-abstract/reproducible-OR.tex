@@ -5,6 +5,7 @@
 \documentclass[runningheads]{llncs}
 %
 \usepackage{graphicx}
+\usepackage{hyperref}
 
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -17,23 +18,24 @@
 \newcommand{\ywa}[1]{\textsf{#1}}
 
 %
-\title{Towards More Reproducible Data Wrangling with OpenRefine\thanks{This work was supported by the US National Science Foundation NSF: OAC \#1541450}}
+\title{Towards More Transparent, Reproducible, and Reusable Data Cleaning with OpenRefine\thanks{Work supported in part by the National Science Foundation, award OAC \#1541450.}}
 %
-%\titlerunning{Abbreviated paper title}
+\titlerunning{Transparent, Reproducible, and Reusable Data Cleaning with OpenRefine}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
 % \author{\relax}
 \author{Lan Li\inst{1} \and
-Qian Zhang\inst{2} \and
-Bertram Lud\"ascher\inst{1}}
+Bertram Lud\"ascher\inst{1} \and
+Qian Zhang\inst{2} 
+}
 %
 %\authorrunning{F. Author et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
 % \institute{\relax}
-\institute{University of Illinois at Urbana-Champaign, Champaign, IL, USA 
+\institute{School of Information Sciences, University of Illinois at Urbana-Champaign, USA 
 \email{\{lanl2,ludaesch\}@illinois.edu}
 \and
 University of Waterloo, 200 University Ave W, Waterloo ON N2L 3G1, Canada
@@ -41,77 +43,122 @@ University of Waterloo, 200 University Ave W, Waterloo ON N2L 3G1, Canada
 }
 
 \maketitle              % typeset the header of the contribution
-%
+
 \begin{abstract}
-OpenRefine (OR) is a popular data wrangling tool. During data cleaning , not only a processed dataset will be generated but also some other provenance-related byproducts. One of them is a native OR recipe (JSON file), and the other one is the Operation History (OH) that lists a series of human-readable data cleaning steps, both of which promote research transparency to some extent by containing some (but incomplete) prospective provenance and partial retrospective provenance information~\cite{ref_proc1}, making them difficult to be directly used for reuse and Reproducibility from OpenRefine Web API (see Fig.~\ref{fig1}). In this poster, a prototype consisting of two sub-systems, one of which extends the native OR recipe to generate a complete recipe (a.k.a. enhanced receipt)  followed by the second re-runner system, is created to complement the missing information between the actual data cleaning operations and the native OR recipe, which meanwhile facilitates transparency, reproducibility and reusability. 
+  We study provenance features of OpenRefine, a popular data cleaning tool. In OpenRefine,
+  provenance is available through \emph{operation histories} and \emph{recipes}. The former provide
+  users with an undo/redo capability; the latter represent histories in JSON, so recipes can be
+  reused. The model implicit in histories and recipes exhibits both \emph{prospective} and
+  \emph{retrospective} provenance features, but is incomplete in at least two ways: (i) functions
+  resulting in mass edits, and (ii) single cell edits are not captured, thus missing important
+  prospective and retrospective provenance information, respectively. We propose to complete the
+  missing information by capturing names and parameters of user-invoked functions, and by exposing
+  retrospective provenance hidden in internal project files. The feasibility of the approach is
+  demonstrated with an early prototype.  \keywords{OpenRefine \and data cleaning \and provenance \and transparency \and reproducibility \and reusability} \end{abstract}
 
-\keywords{OpenRefine \and transparency \and reproducibility \and reusability}
-\end{abstract}
-
-\begin{figure}
-\centering
-\includegraphics[width=100mm,scale=0.7]{figs/DC.png}
-\caption{Data Wrangling in OpenRefine} \label{fig1}
-\end{figure}
-
-
-
-%
-%
-%
 \section{Introduction}
-OpenRefine is used for data wrangling and data cleaning in many areas nowadays. Data cleaning can be understood as taking (presumably "messy") input data $d1.csv$, subjecting it to a data cleaning procedure or workflow $W$, resulting in an (presumably "clean(er)") output data $d2.csv$\footnote[1]{The desiderata for $d2.csv$ include that it is a “better” or more accurate model of reality than $d1.csv$, and that $d2.csv$ is “fit for use/purpose” (whereas $d2.csv$ might not have been). But this is not our concern here.} (see Fig.~\ref{fig1}). When presenting $d2.csv$ three properties are often considered important: a). \textbf{Transparency}: Being transparent about what happened to $d1.csv$ to obtain $d2.csv$. For example, to document “everything” that happened, in particular make sure $W$'0s operations (and parameters) are clearly documented, which is primarily about retrospective provenance~\cite{ref_lncs1}. b). \textbf{Reproducibility}: Being closely related to transparency. The focus lies in that a user should be able to take the workflow $W$ (possibly re-implemented in another language ⇒ $W’$), apply it to $d1.csv$ and obtain the same result, i.e., let \(d3=W'(P,d1)\), where $P$ are any additional inputs (in particular parameters) that are needed to re-execute $W$ on $d1$ to make sure we obtain the same\footnote[1]{In more general settings “same” could be relaxed to “equivalent”. Here, for simplicity, by “same” we mean the same bit-level representation (in practice: a “diff“ between $d2$ and $d1$ will show no differences).} output $d2$. Then \(d3=d2\).
- And c). \textbf{Reusability}: The data cleaning workflow $W$ developed originally for $d1$ should be readily applicable to “similar“ dataset $e1.csv$. That is, we want to reuse $W$ on $e1.csv$ and become a meaningfully “better“ dataset \(e2 = W(e1)\). The strength of OpenRefine lies in that it has already supported transparency, reproducibility and reusability to some extent, in a way that the operation history (a.k.a. recipe) provides a JSON representation (a.k.a. native OR recipe) of most of the operation that OR has performed on a given dataset/project. However, after studying OR recipes and other "sideways/internal provenance information" of OR, we found the following shortcomings: First of all, the native OR recipe shows limited transparency. For example, when the user performs some common transformations such as \ywa{\emph{To lowercase}}  operation, native OR recipe only captures the operation name \textbf{without} recording the actual change of the records (i.e., \ywa{"from": [...]}, \ywa{"to": ...}). The other extreme example is the "single-cell edit" operation, for which neither the operation name nor the operation effect is recorded at all in the native OR recipe (see Fig.~\ref{fig2}). This also demonstrates OR's limited reproducibility issue. Another problem with the native OR recipe is its limited reusability. For example, when the \ywa{\emph{Cluster and edit}} operation is performed, OR captures only the actual change of each record \textbf{without} the underlying “cluster“ method details such as the cluster type, function and/or associated parameter settings. In this way, this native OR recipe can not be reused with the updated dataset.
 
+OpenRefine \cite{OpenRefine} is a popular data cleaning tool that lets users explore, profile, and
+edit datasets in a browser-based, spreadsheet-like GUI. In particular, users can execute various
+transformations on columns, e.g., trimming whitespaces, changing case, converting formats and data
+types, etc. To create canonical names or values in the presence of variant spellings and
+representations, OpenRefine employs powerful clustering methods (\emph{key collision} and
+\emph{nearest neighbor}), parameterized by \emph{keying} or \emph{distance functions}. 
 
-\begin{figure}
+Consider an output dataset $D' = W(D)$ resulting from the application of a user-defined data
+cleaning workflow $W$ on an input dataset $D$ (often a CSV file). The goal of $W$ is that the output
+$D'$ has better \emph{data quality} (is ``cleaner'') than the input $D$ and that $D'$ is ``fit for
+use'' \cite{wang1996accuracy,sadiq2013handbook}.
+
+While working on a data cleaning project, a user's linear \emph{operation history} $H$ provides a high-level, human-readable overview of the sequence of steps performed and can be used to undo and redo operations. In addition, the user can extract all or parts of the operation history to obtain a \emph{recipe} $R$ in machine-readable JSON format. This JSON recipe $R$ can then be \emph{reused} on datasets similar to $D$. The history $H$ and its companion recipe $R$ thus provide valuable \emph{provenance} information about $W$. The following are important requirements or desiderata for workflows and provenance artifacts: 
+
+\begin{itemize}
+\item  \emph{Transparency.} A skeptical data cleaning customer should be able to explain how $D'$ was obtained from $D$, i.e., what operations were performed on what parts of $D$ and in what order. This is the classical domain of provenance.
+\item \emph{Reproducibility.} Given $D$ and a description of $W$,  a skeptic should be able to devise their own implementation $I_W$ such that $I_W(D)$ also yields $D'$.
+\item 
+\emph{Reusability.} It should be ``easy'' to apply $I_W$ to other datasets $E$ that are ``similar
+enough'' to $D$ to obtain a ``cleaner'' $E'$. This notion is necessarily vague, given that
+the underlying notions have to be prescribed first. 
+\end{itemize}
+
+\begin{figure}[t]
 \centering
-\includegraphics[width=100mm]{figs/singleedit.png}\
-\caption{Missing Info with Single Cell Edit Operation} \label{fig2}
+%\includegraphics[width=100mm,scale=0.7]{figs/DC.png}
+\includegraphics[width=0.95\textwidth]{figs/OR-missing-brighter.png} 
+\caption{From Steps 1--10  of the history $H$ (background, left) the user can extract a machine-readable JSON recipe $R$ (bright foreground, right). The \emph{mass edit} in Step 8 is captured via a set of rules $\{$\texttt{from}:\emph{old} $\to$ \texttt{to}:\emph{new}$\}$, but it is \emph{not} recorded which function was used to create these rules. The \emph{single cell edit} in Step 9 is greyed out and cannot be selected by the user for inclusion in  $R$. Neither $H$ nor  $R$ indicate what this edit was. In contrast, the mass edit in Step 10 is included in the recipe $R$: it is fully described by the rule \texttt{from:FRUHSTUCK-BREAKFAST} $\to$ \texttt{FR\"UHST\"UCK-BREAKFAST} that has been (and can be, prospectively)  applied  to all values in the EVENT column.
+}  
+\label{fig:missing} 
 \end{figure}
 
 
-\section{Contributions}
-In this poster, a CLI (command line interface) prototype consisting of two sub-systems is developed by extending the OpenRefine Python Client Library (OR-client)~\cite{ref_url1}. The first one is named CLOPER (Command-Line OpenRefine Prototype for Enhanced Recipe), which makes the incomplete native OR recipe complete to improve OR's transparency and reusability. And the ERRR system (Enhanced Recipe Re-Runner) verifies the resproducility of the enhanced recipe derived from CLOPER.
 
-\section{Prototype}
-The prototype includes two sub-systems. 
-\subsection{Command-Line OpenRefine Prototype for Enhanced Recipe} CLOPER (see Fig.~\ref{fig3}) aims to enhance transparency and reusability of the native OR recipe, which reads in the original "messy" dataset ($d1.csv$) and communicates with an OR server through the interface provided by the OR-client. The outputs consist of three products: an enhanced recipe ($EnhancedRecipe.JSON$) is generated at the back-end; a "cleaned" dataet ($d2.csv$) and a native OR recipe ($NativeORRecipe.JSON$) are exported from the OR web UI. 
-\subsection{Enhanced Recipe Re-Runner}
-In regards to reproducibility, ERRR (see Fig.~\ref{fig4}) re-implements the enhanced recipe ($EnhancedRecipe.JSON$) that is derived from CLOPER, applies to the same original "messy" dataset ($d1.csv$). Again ERRR connects to an OR server via OR-client and obtains the same output ($d2.csv$) associated with the native OR recipe ($NativeORRecipe.JSON$).
+\section{Provenance and OpenRefine}\label{sec:prov-openr}
 
-A subset of the OR operations (e.g., \ywa{\emph{Cluster and edit}}, \ywa{\emph{To lowercase}}, \ywa{\emph{To date}} , etc.) were used to test both sub-systems of the proposed prototype. The results showed that the enhanced OR recipe improved the transparency, reproducibility and reusability compared to the native OR recipe. 
+We distinguish \emph{prospective provenance} which is the specification of a workflow $W$ or at
+least of $W$'s dataflow dependencies, and \emph{retrospective provenance} which records runtime
+observables used to instantiate $W$. In OpenRefine the user workflow $W$ is partially captured in
+the operation history $H$ and the associated recipe~$R$, which can thus serve as an implementation
+$I_W$. However, as illustrated in Figure~\ref{fig:missing}, $R$ is \emph{incomplete}: If the user
+chose a \emph{Cluster \& Edit} method, e.g., \emph{key collision} with $n$-gram \emph{fingerprint}
+function for $n=3$, then $R$ only captures rules $\{$\texttt{from}:\emph{old} $\to$
+\texttt{to}:\emph{new}$\}$, but not the method, function, or parameters. Thus prospective provenance
+is lost and reusability diminished. If the user performs a \emph{single cell edit}, say fixing
+umlauts in a particular cell, then this ``one-off'' is not considered a reusable operation and
+(understandably) omitted from the recipe $R$. However an important piece of retrospective provenance
+is lost this way, reducing transparency and preventing reproducibility of $W$ via $R$.
 
-\begin{figure}
-    \centering
-    \begin{minipage}{0.55\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{figs/CLOPER.png} % first figure itself
-        \caption{Command Line OpenRefine Prototype for Enhanced Recipe(CLOPER)}\label{fig3}\centering
-    \end{minipage}\hfill
-    \begin{minipage}{0.4\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{figs/ERRR.png} % second figure itself
-        \caption{Enhanced Recipe Re-Runner(ERRR)}\label{fig4}\centering
-    \end{minipage}
+
+\section{Approach and Demonstration}\label{sec:appr-prot-demonstr}
+
+\begin{figure}[t] 
+\centering
+\includegraphics[width=0.95\textwidth]{figs/OR-internal.png}
+\caption{OpenRefine project files reveal missing retrospective provenance: the \texttt{data} zip-archive contains a reference to a single-cell edit (center left); the individual update is recorded in a \texttt{change} archive in a history folder (top). } \label{fig-archives}
 \end{figure}
+ 
+We propose to enhance the native OpenRefine recipes as follows: when users select operations such as
+\emph{Cluster \& Edit}, the system should also capture \emph{prospective} information such as the
+clustering method with associated functions and parameters. Missing \emph{retrospective}
+information, e.g., from single cell edits should be extracted from internal OpenRefine files and
+made explicit (Figure~\ref{fig-archives}).
 
-\section{Further Work}
-For the further work, more operations (e.g.,\ywa{\emph{single-cell edit}}) need to be improved by fixing the incomplete and/or missing information (see Fig.~\ref{fig2}). In order to advance reproducibility of the enhanced recipe, CLOPER is expected to assist in capturing more prospective and retrospective provenance. 
+\begin{figure}[h]
+        \centering
+        \includegraphics[width=\textwidth]{figs/reproducible-OR-crop} 
+        \caption{Driven by user interactions in the OpenRefine (OR) GUI, input dataset $D$ is transformed
+          (cleaned)  to obtain $D'$. The OR server captures provenance information in a
+          user-readable history $H$, machine-readble JSON recipe $R$, and internal project files.
+          CLOPER is used to capture additional provenance in an enhanced recipe (ER). The ER
+          Re-Runner (ER3) can execute native recipes and enhanced recipes}\label{fig-CLOPER-ER3}
+\end{figure}
+ 
+To demonstrate our approach we have developed CLOPER (Command-Line OpenRefine Prototype for Enhanced
+Recipes) and ER3 (Enhanced Recipe Re-Runner) \cite{ORtools2018}, both of which use a Python client
+library \cite{makepeace18ORclient} to communicate with the OpenRefine server. CLOPER can execute
+OpenRefine operations via a command-line driven interface (i.e., without a GUI) and adds missing
+prospective information to recipes (Figure~\ref{fig-CLOPER-ER3}). ER3 can then run those enhanced
+recipes and demonstrate the improved transparency, reproducibility, and reusability. Further
+extensions to CLOPER and ER3 to add additional prospective and retrospective provenance are under
+development.
 
-\begin{thebibliography}{8}
 
-\bibitem{ref_proc1}
-Dey, S., Belhajjame, K., Koop, D., Raul, M.,Lud\"ascher, B.:Linking prospective and retrospective provenance in scripts. In: Theory and Practice of Provenance. In: 9 International Journal of Digital Curation. (2015)
-
-\bibitem{ref_lncs1}
-Zhao, Y., Wilde, M., Foster, I.:Applying the virtual data provenance model. In: International Provenance and Annotation Workshop pp. 148-161. Springer, Berlin, Heidelberg.(2006, May)
-
-\bibitem{ref_url1}
-OpenRefine-client Library Github, \url{https://github.com/opencultureconsulting/openrefine-client}. 
+\bibliographystyle{splncs04}
+\bibliography{datacleaning}
 
 
-\end{thebibliography}
+% \begin{thebibliography}{8}
+
+% \bibitem{ref_proc1}
+% Dey, S., Belhajjame, K., Koop, D., Raul, M.,Lud\"ascher, B.:Linking prospective and retrospective provenance in scripts. In: Theory and Practice of Provenance. In: 9 International Journal of Digital Curation. (2015)
+
+% \bibitem{ref_lncs1}
+% Zhao, Y., Wilde, M., Foster, I.:Applying the virtual data provenance model. In: International Provenance and Annotation Workshop pp. 148-161. Springer, Berlin, Heidelberg.(2006, May)
+
+% \bibitem{ref_url1}
+% OpenRefine-client Library Github, \url{https://github.com/opencultureconsulting/openrefine-client}. 
+
+
+% \end{thebibliography}
 
 
 
