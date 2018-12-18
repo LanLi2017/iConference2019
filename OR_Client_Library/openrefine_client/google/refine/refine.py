@@ -415,6 +415,22 @@ class RefineProject:
         edits = [{'from': [edit_from], 'to': edit_to}]
         return self.mass_edit(column, edits)
 
+    def single_edit(self, row,cell,type,value):
+        '''
+        row=58
+        cell=5
+        old={"v":"COM"}
+        new={"v":"COMMERCIAL"}
+        :param rowIndex: 58
+        :param cellIndex: 5
+        :param value: [{'from':"COM", 'to': "COMMERCIAL"}]
+        :return:
+        '''
+        # edit=[{'old': old, 'new':new}]
+        # one_edit=json.dumps(edit)
+        return self.do_json('edit-one-cell', { 'row': row,'cell': cell, 'type':type,
+                                              'value': value})
+
     def mass_edit(self, column, edits, expression='value'):
         """edits is [{'from': ['foo'], 'to': 'bar'}, {...}]"""
         edits = json.dumps(edits)
@@ -456,7 +472,7 @@ class RefineProject:
         if annotation not in ('starred', 'flagged'):
             raise ValueError('annotation must be one of starred or flagged')
         state = 'true' if state is True else 'false'
-        return self.do_json('annotate-one-row', {'row': row.index,
+        return self.do_json('annotate-one-row', {'row': row,
                                                  annotation: state})
 
     def flag_row(self, row, flagged=True):

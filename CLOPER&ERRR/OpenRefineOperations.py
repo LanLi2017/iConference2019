@@ -143,6 +143,10 @@ def mass_edit(project_id,column,edits,expression='value'):
     return refine.RefineProject(refine.RefineServer(),project_id).mass_edit(column,edits,expression)
 
 
+def single_edit(project_id,row,cell,type,value):
+    return refine.RefineProject(refine.RefineServer(),project_id).single_edit(row,cell,type,value)
+
+
 def annotate_one_row(project_id,row,annotation,state=True):
     return refine.RefineProject(refine.RefineServer(),project_id).annotate_one_row(row,annotation,state)
 

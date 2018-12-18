@@ -142,6 +142,8 @@ def main():
                         'Transform the column value to Date',
                         'Transform the column value to Numeric',
                         'Split multi-valued cells in column ',
+                        'Single Edit cell',
+                        'star this row',
                         'Exit this column',
                     ])
                     if userOperates==1:
@@ -342,6 +344,32 @@ def main():
                         # something special here
                         # if split into several columns, then usercolumn will change
                     elif userOperates==8:
+                        Onedicts={}
+                        Onedicts['op']='single-edit'
+                        userrowindex=int(raw_input('input the row number for edits:'))
+                        usercellindex=int(raw_input('input the column number for edits:'))
+                        # get the original cell
+                        useroldcell=raw_input('input the old cell:')
+                        usernewcell=raw_input('input the new cell:')
+                        usertype=raw_input('input the value type:')
+                        edits=[{'old': useroldcell, 'new': usernewcell}]
+                        Onedicts['description']='Edit single cell on row %s, column %s'%(userrowindex,usercolumn)
+                        Onedicts['columnName']='%s'%usercolumn
+                        Onedicts['value']=edits
+                        Onedicts['rowIndex']=userrowindex
+                        Onedicts['cellIndex']=usercellindex
+                        Onedicts['type']=usertype
+                        result.append(Onedicts)
+
+                        OR.single_edit(projectID,userrowindex,usercellindex,usertype,usernewcell)
+                    elif userOperates==9:
+                        stardicts={}
+                        stardicts['op']='star-row'
+                        rowindex=int(raw_input('input the row number:'))
+                        stardicts['rowIndex']=rowindex
+                        result.append(stardicts)
+                        OR.star_row(projectID,rowindex,starred=True)
+                    elif userOperates==10:
                         if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                             break
                 usercolumn=CheckColumnName('Data Cleaning',projectID)
