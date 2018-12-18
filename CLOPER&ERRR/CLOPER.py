@@ -346,26 +346,31 @@ def main():
                     elif userOperates==8:
                         Onedicts={}
                         Onedicts['op']='single-edit'
-                        userrowindex=int(raw_input('input the row number for edits:'))
+                        userrowindex=int(raw_input('input the row number for edits, row number starts from 0:'))
                         usercellindex=int(raw_input('input the column number for edits:'))
                         # get the original cell
-                        useroldcell=raw_input('input the old cell:')
                         usernewcell=raw_input('input the new cell:')
+                        '''
+                        type choice:
+                        number
+                        boolean
+                        date
+                        default=String
+                        '''
                         usertype=raw_input('input the value type:')
-                        edits=[{'old': useroldcell, 'new': usernewcell}]
                         Onedicts['description']='Edit single cell on row %s, column %s'%(userrowindex,usercolumn)
                         Onedicts['columnName']='%s'%usercolumn
-                        Onedicts['value']=edits
                         Onedicts['rowIndex']=userrowindex
                         Onedicts['cellIndex']=usercellindex
                         Onedicts['type']=usertype
+                        Onedicts['new']=usernewcell
                         result.append(Onedicts)
 
                         OR.single_edit(projectID,userrowindex,usercellindex,usertype,usernewcell)
                     elif userOperates==9:
                         stardicts={}
                         stardicts['op']='star-row'
-                        rowindex=int(raw_input('input the row number:'))
+                        rowindex=int(raw_input('input the row number, row number starts from 0:'))
                         stardicts['rowIndex']=rowindex
                         result.append(stardicts)
                         OR.star_row(projectID,rowindex,starred=True)

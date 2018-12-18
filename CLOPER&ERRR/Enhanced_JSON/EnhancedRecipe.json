@@ -1,50 +1,15 @@
 [
   {
-    "newColumnName": "news", 
-    "oldColumnName": "event", 
-    "opname": "rename", 
-    "description": "Rename column event to news", 
-    "op": "core/column-rename"
+    "description": "Edit single cell on row 1, column id", 
+    "cellIndex": 1, 
+    "rowIndex": 1, 
+    "columnName": "id", 
+    "new": "66666", 
+    "type": "number", 
+    "op": "single-edit"
   }, 
   {
-    "Cluster-function": "fingerprint", 
-    "description": "Mass edit cells in column news", 
-    "columnName": "news", 
-    "engineConfig": {
-      "facets": "[]", 
-      "mode": "row-based"
-    }, 
-    "opname": "Cluster_and_Relabel", 
-    "Cluster-type": "binning", 
-    "expression": "value", 
-    "op": "core/mass-edit"
-  }, 
-  {
-    "repeat": "false", 
-    "description": "Text transform on cells in column news using expression value.trim()", 
-    "onError": "set-to-blank", 
-    "repeatCount": 10, 
-    "columnName": "news", 
-    "engineConfig": {
-      "facets": "[]", 
-      "mode": "row-based"
-    }, 
-    "opname": "TrimwhiteSpace", 
-    "expression": "value.trim()", 
-    "op": "core/text-transform"
-  }, 
-  {
-    "repeat": "false", 
-    "description": "Text transform on cells in column sponsor using expression value.toLowercase()", 
-    "onError": "set-to-blank", 
-    "repeatCount": 10, 
-    "columnName": "sponsor", 
-    "engineConfig": {
-      "facets": "[]", 
-      "mode": "row-based"
-    }, 
-    "opname": "toLowercase", 
-    "expression": "value.toLowercase()", 
-    "op": "core/text-transform"
+    "rowIndex": 1, 
+    "op": "star-row"
   }
 ]

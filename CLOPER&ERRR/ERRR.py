@@ -20,11 +20,11 @@ def main():
         dataset=json.load(f)
 
     for dicts in dataset:
-        if dicts['opname']=='rename':
+        if dicts['op']=='core/column-rename':
             oldcol=dicts['oldColumnName']
             newcol=dicts['newColumnName']
             OR.rename_column(projectID,oldcol,newcol)
-        elif dicts['opname']=='Cluster_and_Relabel':
+        elif dicts['op']=='core/mass-edit':
             columnName=dicts['columnName']
             clusterer_type=dicts['Cluster-type']
             function=dicts['Cluster-function']
@@ -43,16 +43,22 @@ def main():
             columnName=dicts['columnName']
             expression=dicts['expression']
             OR.text_transform(projectID,columnName,expression)
-        elif dicts['opname']=='Splitcolumn':
+        elif dicts['op']=='core/column-split':
             columnName=dicts['columnName']
             separator=dicts['separator']
             OR.split_column(projectID,columnName,separator)
+        elif dicts['op']=='single-edit':
+            optype=dicts['type']
+            oprowIndex=dicts['rowIndex']
+            opcellIndex=dicts['cellIndex']
+            opnew=dicts['new']
+            OR.single_edit(projectID,oprowIndex,opcellIndex,optype,opnew)
+
+        elif dicts['op']=='star-row':
+            oprowIndex=dicts['rowIndex']
+            OR.star_row(projectID,oprowIndex)
     with open('OutputDataset/%s.csv'%project_Name, 'wb')as f:
         f.writelines(OR.export(projectID,'csv'))
-
-
-
-
 
 
 if __name__=='__main__':
