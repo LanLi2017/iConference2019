@@ -121,7 +121,6 @@ def main():
             while userrenamechoice.lower()!='n':
                 renamedicts={}
                 renamedicts['op']='core/column-rename'
-                renamedicts['opname']='rename'
                 newcolumnname=raw_input("Enter the new column name:")
                 renamedicts['description']='Rename column %s to %s'%(userrenamechoice, newcolumnname)
                 renamedicts['oldColumnName']='%s'%userrenamechoice
@@ -149,7 +148,6 @@ def main():
                     if userOperates==1:
                         ClusterRelabeldicts={}
                         ClusterRelabeldicts['op']='core/mass-edit'
-                        ClusterRelabeldicts['opname']='Cluster_and_Relabel'
                         ClusterRelabeldicts['description']='Mass edit cells in column %s'%usercolumn
                         ClusterRelabeldicts['engineConfig']={}
                         ClusterRelabeldicts['engineConfig']['mode']='row-based'
@@ -244,7 +242,6 @@ def main():
                     elif userOperates==2:
                         trimdicts={}
                         trimdicts['op']='core/text-transform'
-                        trimdicts['opname']='TrimwhiteSpace'
                         trimdicts['description']='Text transform on cells in column %s using expression value.trim()'%usercolumn
                         trimdicts['engineConfig']={}
                         trimdicts['engineConfig']['mode']='row-based'
@@ -260,7 +257,6 @@ def main():
                     elif userOperates==3:
                         Lowercasedicts={}
                         Lowercasedicts['op']='core/text-transform'
-                        Lowercasedicts['opname']='toLowercase'
                         Lowercasedicts['description']='Text transform on cells in column %s using expression value.toLowercase()'%usercolumn
                         Lowercasedicts['engineConfig']={}
                         Lowercasedicts['engineConfig']['mode']='row-based'
@@ -276,7 +272,6 @@ def main():
 
                         Uppercasedicts={}
                         Uppercasedicts['op']='core/text-transform'
-                        Uppercasedicts['opname']='toUppercase'
                         Uppercasedicts['description']='Text transform on cells in column %s using expression value.toUppercase()'%usercolumn
                         Uppercasedicts['engineConfig']={}
                         Uppercasedicts['engineConfig']['mode']='row-based'
@@ -292,7 +287,6 @@ def main():
                     elif userOperates==5:
                         Datedicts={}
                         Datedicts['op']='core/text-transform'
-                        Datedicts['opname']='ToDate'
                         Datedicts['description']='Text transform on cells in column %s using expression value.toDate()'%usercolumn
                         Datedicts['engineConfig']={}
                         Datedicts['engineConfig']['mode']='row-based'
@@ -308,7 +302,6 @@ def main():
                     elif userOperates==6:
                         Numberdicts={}
                         Numberdicts['op']='core/text-transform'
-                        Numberdicts['opname']='toNumber'
                         Numberdicts['description']='Text transform on cells in column %s using expression value.toNumber()'%usercolumn
                         Numberdicts['engineConfig']={}
                         Numberdicts['engineConfig']['mode']='row-based'
@@ -324,7 +317,6 @@ def main():
                     elif userOperates==7:
                         Splitdicts={}
                         Splitdicts['op']='core/column-split'
-                        Splitdicts['opname']='Splitcolumn'
                         Splitdicts['description']='Split column %s by separator'%usercolumn
                         Splitdicts['engineConfig']={}
                         Splitdicts['engineConfig']['mode']='row-based'

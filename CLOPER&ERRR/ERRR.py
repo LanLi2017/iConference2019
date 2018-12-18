@@ -38,7 +38,6 @@ def main():
             edits=[{'from':f1, 'to':t} for f1,t in zip(Edit_from, Edit_to)]
             OR.mass_edit(projectID,columnName,edits)
 
-
         elif dicts['op']=='core/text-transform':
             columnName=dicts['columnName']
             expression=dicts['expression']
