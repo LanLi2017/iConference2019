@@ -7,7 +7,7 @@ test_history.py
 
 import unittest
 
-from google.refine.history import *
+from OR_Client_Library.openrefine_client.google.refine.history import *
 
 
 class HistoryTest(unittest.TestCase):

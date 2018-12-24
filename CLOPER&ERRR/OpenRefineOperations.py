@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 
 from OR_Client_Library.openrefine_client.google.refine import refine
 
@@ -54,6 +55,23 @@ def get_models(project_id):
     # Column structure is a list of columns in their order.
     # The cellIndex is an index for that column's data into the list returned from get_rows().
     return refine.RefineProject(refine.RefineServer(),project_id).get_models()
+
+
+def get_cell_value(project_id,columnIndex):
+    # nestedlist: [{u'cells': [{u'v': u'10136'},....{}]},{u 'cells': [...]}]
+    # The cellIndex is an index for that column's data into the list returned from get_rows().
+    # 'from': cell_value, 'to': new_cell_value
+    nested_list=refine.RefineProject(refine.RefineServer(),project_id).get_cell_value()
+    AimCellValue=[]
+    for inner_dicts in nested_list:
+        AimCellValue.append(inner_dicts['cells'][columnIndex])
+    return AimCellValue
+
+
+def get_single_cell_value(project_id,cellIndex, rowIndex):
+    nested_list=refine.RefineProject(refine.RefineServer(),project_id).get_cell_value()
+    aim_single_cell_value=nested_list[rowIndex]['cells'][cellIndex]
+    return aim_single_cell_value
 
 
 def get_preference(project_id,name):
@@ -237,11 +255,15 @@ def input_path_convenient(prompt):
 def main():
     userinputpath=input_path_convenient('please input CSV name:')
     userinputname=raw_input('please input new project name:')
-    userinputjson=input_path_convenient('please input OR_JSON name:')
+    # userinputjson=input_path_convenient('please input OR_JSON name:')
     project_id=create_project(userinputpath,userinputname)
     print(project_id)
+    # test get_cell_value
+    rows=get_cell_value(project_id,columnIndex=1)
+    pprint(rows)
+
     # test apply json file
-    apply_operations(project_id,userinputjson)
+    # apply_operations(project_id,userinputjson)
 
 
 if __name__=='__main__':

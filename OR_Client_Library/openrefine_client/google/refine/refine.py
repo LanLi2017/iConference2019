@@ -273,6 +273,11 @@ class RefineProject:
         # following filled in by get_reconciliation_services
         self.recon_services = None
 
+    def get_cell_value(self):
+        # rr=RowsResponseFactory(columnIndex)
+        rr=self.do_json('get-rows')
+        return rr['rows']
+
     def project_name(self):
         return Refine(self.server).get_project_name(self.project_id)
 

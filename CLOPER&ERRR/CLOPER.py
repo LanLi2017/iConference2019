@@ -69,6 +69,7 @@ def GetColumnName(projectID):
     column_name = [column['name'] for column in column_model['columns']]
     return column_name
 
+
 def CheckColumnName(op,projectid):
     columnnamelist=GetColumnName(projectid)
     print('column name list : {}\n'.format(columnnamelist))
@@ -79,6 +80,12 @@ def CheckColumnName(op,projectid):
             return userrenamechoice
         else:
             print("column name not found, please re-enter: ")
+
+
+def returnEdit(fromcelllist, tocelllist):
+    # edit:[{'from':{}, 'to':}]
+    edit=[{'from':f1, 'to':t} for f1,t in zip(fromcelllist, tocelllist)]
+    return edit
 
 
 def main():
@@ -132,17 +139,16 @@ def main():
             # further operations
             usercolumn=CheckColumnName('Data Cleaning',projectID)
             while usercolumn.lower()!='n':
+                columnIndex=GetColumnName(projectID).index(usercolumn)
+                print(usercolumn)
+                print(columnIndex)
                 while True:
                     userOperates=prompt_options([
-                        'Cluster and Relabel',
-                        'Trim Whitespace',
-                        'Lowercase the column value',
-                        'Uppercase the column value',
-                        'Transform the column value to Date',
-                        'Transform the column value to Numeric',
+                        'Cluster and Edit',
+                        'Common transforms',
                         'Split multi-valued cells in column ',
                         'Single Edit cell',
-                        'star this row',
+                        'star the row',
                         'Exit this column',
                     ])
                     if userOperates==1:
@@ -240,81 +246,62 @@ def main():
                             OR.mass_edit(projectID,usercolumn,mannually_edits,expression='value')
 
                     elif userOperates==2:
-                        trimdicts={}
-                        trimdicts['op']='core/text-transform'
-                        trimdicts['description']='Text transform on cells in column %s using expression value.trim()'%usercolumn
-                        trimdicts['engineConfig']={}
-                        trimdicts['engineConfig']['mode']='row-based'
-                        trimdicts['engineConfig']['facets']='[]'
-                        trimdicts['columnName']='%s'%usercolumn
-                        trimdicts['expression']='value.trim()'
-                        trimdicts['onError']='set-to-blank'
-                        trimdicts['repeat']='false'
-                        trimdicts['repeatCount']=10
-                        result.append(trimdicts)
+                        while True:
+                            userchoice=prompt_options([
+                                'Trim leading and trailing whitespace',
+                                'Collapse consecutive whitespace',
+                                'Unescape HTML entities',
+                                'To titlecase',
+                                'To uppercase',
+                                'To lowercase',
+                                'To number',
+                                'To date',
+                                'To text',
+                                'Blank out cells',
+                                'exit',
+                            ])
+                            text_transform={}
+                            text_transform['op']='core/text-transform'
+                            text_transform['engineConfig']={}
+                            text_transform['engineConfig']['mode']='row-based'
+                            text_transform['engineConfig']['facets']='[]'
+                            text_transform['columnName']='%s'%usercolumn
+                            text_transform['onError']='set-to-blank'
+                            text_transform['repeat']='false'
+                            text_transform['repeatCount']=10
+                            fromlist = OR.get_cell_value(projectID,columnIndex)
+                            if userchoice==1:
+                                text_transform['expression']='value.trim()'
+                                # 'from': get_cell_value(), 'to': get_cell_value()
+                            elif userchoice==2:
+                                text_transform['expression']='value.replace(/\\s+/,' ')'
+                            elif userchoice==3:
+                                text_transform['expression']='value.unescape("html")'
+                            elif userchoice==4:
+                                text_transform['expression']='value.toTitlecase()'
+                            elif userchoice==5:
+                                text_transform['expression']='value.toUppercase()'
+                            elif userchoice==6:
+                                text_transform['expression']='value.toLowercase()'
+                            elif userchoice==7:
+                                text_transform['expression']='value.toNumber()'
+                            elif userchoice==8:
+                                text_transform['expression']='value.toDate()'
+                            elif userchoice==9:
+                                text_transform['expression']='value.toString()'
+                            elif userchoice==10:
+                                text_transform['expression']='null'
+                            elif userchoice==11:
+                                if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
+                                    break
+                            OR.text_transform(projectID,usercolumn,text_transform['expression'])
+                            tolist=OR.get_cell_value(projectID,columnIndex)
+                            text_transform['edit']=returnEdit(fromlist,tolist)
+                            pprint(text_transform['edit'])
+                            text_transform['description']='Text transform on cells in column %s using expression %s'%(usercolumn,text_transform['expression'])
+                            result.append(text_transform)
 
-                        OR.text_transform(projectID,usercolumn,'value.trim()')
                     elif userOperates==3:
-                        Lowercasedicts={}
-                        Lowercasedicts['op']='core/text-transform'
-                        Lowercasedicts['description']='Text transform on cells in column %s using expression value.toLowercase()'%usercolumn
-                        Lowercasedicts['engineConfig']={}
-                        Lowercasedicts['engineConfig']['mode']='row-based'
-                        Lowercasedicts['engineConfig']['facets']='[]'
-                        Lowercasedicts['columnName']='%s'%usercolumn
-                        Lowercasedicts['expression']='value.toLowercase()'
-                        Lowercasedicts['onError']='set-to-blank'
-                        Lowercasedicts['repeat']='false'
-                        Lowercasedicts['repeatCount']=10
-                        result.append(Lowercasedicts)
-                        OR.text_transform(projectID,usercolumn,'value.toLowercase()')
-                    elif userOperates==4:
-
-                        Uppercasedicts={}
-                        Uppercasedicts['op']='core/text-transform'
-                        Uppercasedicts['description']='Text transform on cells in column %s using expression value.toUppercase()'%usercolumn
-                        Uppercasedicts['engineConfig']={}
-                        Uppercasedicts['engineConfig']['mode']='row-based'
-                        Uppercasedicts['engineConfig']['facets']='[]'
-                        Uppercasedicts['columnName']='%s'%usercolumn
-                        Uppercasedicts['expression']='value.toUppercase()'
-                        Uppercasedicts['onError']='set-to-blank'
-                        Uppercasedicts['repeat']='false'
-                        Uppercasedicts['repeatCount']=10
-                        result.append(Uppercasedicts)
-
-                        OR.text_transform(projectID,usercolumn,'value.toUppercase()')
-                    elif userOperates==5:
-                        Datedicts={}
-                        Datedicts['op']='core/text-transform'
-                        Datedicts['description']='Text transform on cells in column %s using expression value.toDate()'%usercolumn
-                        Datedicts['engineConfig']={}
-                        Datedicts['engineConfig']['mode']='row-based'
-                        Datedicts['engineConfig']['facets']='[]'
-                        Datedicts['columnName']='%s'%usercolumn
-                        Datedicts['expression']='value.toDate()'
-                        Datedicts['onError']='set-to-blank'
-                        Datedicts['repeat']='false'
-                        Datedicts['repeatCount']=10
-                        result.append(Datedicts)
-
-                        OR.text_transform(projectID,usercolumn,'value.toDate()')
-                    elif userOperates==6:
-                        Numberdicts={}
-                        Numberdicts['op']='core/text-transform'
-                        Numberdicts['description']='Text transform on cells in column %s using expression value.toNumber()'%usercolumn
-                        Numberdicts['engineConfig']={}
-                        Numberdicts['engineConfig']['mode']='row-based'
-                        Numberdicts['engineConfig']['facets']='[]'
-                        Numberdicts['columnName']='%s'%usercolumn
-                        Numberdicts['expression']='value.toNumber()'
-                        Numberdicts['onError']='set-to-blank'
-                        Numberdicts['repeat']='false'
-                        Numberdicts['repeatCount']=10
-                        result.append(Numberdicts)
-
-                        OR.text_transform(projectID,usercolumn,'value.toNumber()')
-                    elif userOperates==7:
                         Splitdicts={}
                         Splitdicts['op']='core/column-split'
                         Splitdicts['description']='Split column %s by separator'%usercolumn
@@ -335,13 +322,15 @@ def main():
                         OR.split_column(projectID,usercolumn,userSeparator,remove_original_column=usersetremove)
                         # something special here
                         # if split into several columns, then usercolumn will change
-                    elif userOperates==8:
+                    elif userOperates==4:
                         Onedicts={}
                         Onedicts['op']='single-edit'
                         userrowindex=int(raw_input('input the row number for edits, row number starts from 0:'))
                         usercellindex=int(raw_input('input the column number for edits:'))
                         # get the original cell
+                        useroldcell=OR.get_single_cell_value(projectID,usercellindex,userrowindex)
                         usernewcell=raw_input('input the new cell:')
+                        edit=[{'from': useroldcell, 'to':usernewcell}]
                         '''
                         type choice:
                         number
@@ -355,18 +344,18 @@ def main():
                         Onedicts['rowIndex']=userrowindex
                         Onedicts['cellIndex']=usercellindex
                         Onedicts['type']=usertype
-                        Onedicts['new']=usernewcell
+                        Onedicts['edit']=edit
                         result.append(Onedicts)
 
                         OR.single_edit(projectID,userrowindex,usercellindex,usertype,usernewcell)
-                    elif userOperates==9:
+                    elif userOperates==5:
                         stardicts={}
                         stardicts['op']='star-row'
                         rowindex=int(raw_input('input the row number, row number starts from 0:'))
                         stardicts['rowIndex']=rowindex
                         result.append(stardicts)
                         OR.star_row(projectID,rowindex,starred=True)
-                    elif userOperates==10:
+                    elif userOperates==6:
                         if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                             break
                 usercolumn=CheckColumnName('Data Cleaning',projectID)

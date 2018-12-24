@@ -1,15 +1,264 @@
 [
   {
-    "description": "Edit single cell on row 1, column id", 
-    "cellIndex": 1, 
-    "rowIndex": 1, 
-    "columnName": "id", 
-    "new": "66666", 
-    "type": "number", 
-    "op": "single-edit"
+    "repeat": "false", 
+    "description": "Text transform on cells in column event using expression value.toUppercase()", 
+    "onError": "set-to-blank", 
+    "repeatCount": 10, 
+    "edit": [
+      {
+        "to": {
+          "v": "SUPPER MENU"
+        }, 
+        "from": {
+          "v": "Supper Menu"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "DESSERT MENU"
+        }, 
+        "from": {
+          "v": "Dessert menu"
+        }
+      }, 
+      {
+        "to": {
+          "v": "EIGHTH ANNUAL DINNER"
+        }, 
+        "from": {
+          "v": "EIGHTH ANNUAL DINNER"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "LUNCH"
+        }, 
+        "from": {
+          "v": "lunch"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "SUPPER"
+        }, 
+        "from": {
+          "v": "SUPPER"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "TIFFIN"
+        }, 
+        "from": {
+          "v": "TIFFIN"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "DINNER"
+        }, 
+        "from": {
+          "v": "DINNER"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "INAUGURATION DAY"
+        }, 
+        "from": {
+          "v": "INAUGURATION DAY"
+        }
+      }, 
+      {
+        "to": {
+          "v": "NINETEENTH ANNUAL DINNER"
+        }, 
+        "from": {
+          "v": "NINETEENTH ANNUAL DINNER"
+        }
+      }
+    ], 
+    "columnName": "event", 
+    "engineConfig": {
+      "facets": "[]", 
+      "mode": "row-based"
+    }, 
+    "expression": "value.toUppercase()", 
+    "op": "core/text-transform"
   }, 
   {
-    "rowIndex": 1, 
-    "op": "star-row"
+    "repeat": "false", 
+    "description": "Text transform on cells in column event using expression value.toLowercase()", 
+    "onError": "set-to-blank", 
+    "repeatCount": 10, 
+    "edit": [
+      {
+        "to": {
+          "v": "supper menu"
+        }, 
+        "from": {
+          "v": "SUPPER MENU"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "dessert menu"
+        }, 
+        "from": {
+          "v": "DESSERT MENU"
+        }
+      }, 
+      {
+        "to": {
+          "v": "eighth annual dinner"
+        }, 
+        "from": {
+          "v": "EIGHTH ANNUAL DINNER"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "lunch"
+        }, 
+        "from": {
+          "v": "LUNCH"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "supper"
+        }, 
+        "from": {
+          "v": "SUPPER"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "tiffin"
+        }, 
+        "from": {
+          "v": "TIFFIN"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "dinner"
+        }, 
+        "from": {
+          "v": "DINNER"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "inauguration day"
+        }, 
+        "from": {
+          "v": "INAUGURATION DAY"
+        }
+      }, 
+      {
+        "to": {
+          "v": "nineteenth annual dinner"
+        }, 
+        "from": {
+          "v": "NINETEENTH ANNUAL DINNER"
+        }
+      }
+    ], 
+    "columnName": "event", 
+    "engineConfig": {
+      "facets": "[]", 
+      "mode": "row-based"
+    }, 
+    "expression": "value.toLowercase()", 
+    "op": "core/text-transform"
   }
 ]
