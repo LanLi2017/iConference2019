@@ -1,264 +1,31 @@
 [
   {
-    "repeat": "false", 
-    "description": "Text transform on cells in column event using expression value.toUppercase()", 
-    "onError": "set-to-blank", 
-    "repeatCount": 10, 
-    "edit": [
-      {
-        "to": {
-          "v": "SUPPER MENU"
-        }, 
-        "from": {
-          "v": "Supper Menu"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "DESSERT MENU"
-        }, 
-        "from": {
-          "v": "Dessert menu"
-        }
-      }, 
-      {
-        "to": {
-          "v": "EIGHTH ANNUAL DINNER"
-        }, 
-        "from": {
-          "v": "EIGHTH ANNUAL DINNER"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "LUNCH"
-        }, 
-        "from": {
-          "v": "lunch"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "SUPPER"
-        }, 
-        "from": {
-          "v": "SUPPER"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "TIFFIN"
-        }, 
-        "from": {
-          "v": "TIFFIN"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "DINNER"
-        }, 
-        "from": {
-          "v": "DINNER"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "INAUGURATION DAY"
-        }, 
-        "from": {
-          "v": "INAUGURATION DAY"
-        }
-      }, 
-      {
-        "to": {
-          "v": "NINETEENTH ANNUAL DINNER"
-        }, 
-        "from": {
-          "v": "NINETEENTH ANNUAL DINNER"
-        }
-      }
-    ], 
-    "columnName": "event", 
+    "op": "core/mass-edit", 
+    "description": "Mass edit cells in column sponsor", 
     "engineConfig": {
-      "facets": "[]", 
+      "facets": [], 
       "mode": "row-based"
     }, 
-    "expression": "value.toUppercase()", 
-    "op": "core/text-transform"
-  }, 
-  {
-    "repeat": "false", 
-    "description": "Text transform on cells in column event using expression value.toLowercase()", 
-    "onError": "set-to-blank", 
-    "repeatCount": 10, 
-    "edit": [
+    "columnName": "sponsor", 
+    "expression": "value", 
+    "edits": [
       {
-        "to": {
-          "v": "supper menu"
-        }, 
-        "from": {
-          "v": "SUPPER MENU"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "dessert menu"
-        }, 
-        "from": {
-          "v": "DESSERT MENU"
-        }
-      }, 
-      {
-        "to": {
-          "v": "eighth annual dinner"
-        }, 
-        "from": {
-          "v": "EIGHTH ANNUAL DINNER"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "lunch"
-        }, 
-        "from": {
-          "v": "LUNCH"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "supper"
-        }, 
-        "from": {
-          "v": "SUPPER"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "tiffin"
-        }, 
-        "from": {
-          "v": "TIFFIN"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "dinner"
-        }, 
-        "from": {
-          "v": "DINNER"
-        }
-      }, 
-      {
-        "to": null, 
-        "from": null
-      }, 
-      {
-        "to": {
-          "v": "inauguration day"
-        }, 
-        "from": {
-          "v": "INAUGURATION DAY"
-        }
-      }, 
-      {
-        "to": {
-          "v": "nineteenth annual dinner"
-        }, 
-        "from": {
-          "v": "NINETEENTH ANNUAL DINNER"
-        }
+        "fromBlank": "false", 
+        "fromError": "false", 
+        "from": [
+          "Waldorf Astoria", 
+          "Waldorf-Astoria"
+        ], 
+        "to": "Waldorf Astoria"
       }
     ], 
-    "columnName": "event", 
-    "engineConfig": {
-      "facets": "[]", 
-      "mode": "row-based"
+    "cluster-info": {
+      "Cluster-type": "binning", 
+      "Cluster-function": "ngram-fingerprint", 
+      "Cluster-params": {
+        "ngram-size": "4"
+      }
     }, 
-    "expression": "value.toLowercase()", 
-    "op": "core/text-transform"
+    "changes": "Mass edit 5 cells in column sponsor"
   }
 ]
