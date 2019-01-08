@@ -261,7 +261,7 @@ def main():
 
                     elif userOperates==2:
                         while True:
-                            userchoice=prompt_options([
+                            text_expression=[
                                 'Trim leading and trailing whitespace',
                                 'Collapse consecutive whitespace',
                                 'Unescape HTML entities',
@@ -273,16 +273,15 @@ def main():
                                 'To text',
                                 'Blank out cells',
                                 'exit',
-                            ])
+                            ]
+                            userchoice=prompt_options(text_expression)
                             text_transform=OrderedDict()
                             text_transform['op']='core/text-transform'
+                            text_transform['description']='Text transform on cells in column %s using expression %s'%(usercolumn,text_expression[userchoice-1])
                             text_transform['engineConfig']={}
                             text_transform['engineConfig']['mode']='row-based'
-                            text_transform['engineConfig']['facets']='[]'
+                            text_transform['engineConfig']['facets']=[]
                             text_transform['columnName']='%s'%usercolumn
-                            text_transform['onError']='set-to-blank'
-                            text_transform['repeat']='false'
-                            text_transform['repeatCount']=10
                             fromlist = OR.get_cell_value(projectID,columnIndex)
                             if userchoice==1:
                                 text_transform['expression']='value.trim()'
@@ -308,8 +307,10 @@ def main():
                             elif userchoice==11:
                                 if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                                     break
-                            text_transform['description']='Text transform on cells in column %s using expression %s'%(usercolumn,text_transform['expression'])
 
+                            text_transform['onError']='set-to-blank'
+                            text_transform['repeat']='false'
+                            text_transform['repeatCount']=10
                             # do operation text_transform
                             OR.text_transform(projectID,usercolumn,text_transform['expression'])
                             tolist=OR.get_cell_value(projectID,columnIndex)
@@ -328,7 +329,7 @@ def main():
                         Splitdicts['description']='Split column %s by separator'%usercolumn
                         Splitdicts['engineConfig']={}
                         Splitdicts['engineConfig']['mode']='row-based'
-                        Splitdicts['engineConfig']['facets']='[]'
+                        Splitdicts['engineConfig']['facets']=[]
                         Splitdicts['columnName']='%s'%usercolumn
                         Splitdicts['guessCellType']='true'
                         usersetremove=raw_input("Remove the original column or not,set true or false")
@@ -382,6 +383,7 @@ def main():
                     elif userOperates==5:
                         stardicts=OrderedDict()
                         stardicts['op']='star-row'
+                        stardicts['description']='Star this row'
                         rowindex=int(raw_input('input the row number, row number starts from 0:'))
                         stardicts['rowIndex']=rowindex
                         OR.star_row(projectID,rowindex,starred=True)
