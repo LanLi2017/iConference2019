@@ -1,3 +1,4 @@
+import json
 import os
 from pprint import pprint
 
@@ -232,6 +233,10 @@ def reconcile(project_id,column,service,reconciliation_type=None,reconciliation_
     return refine.RefineProject(refine.RefineServer(),project_id).reconcile(column,service,reconciliation_type,reconciliation_config)
 
 
+def get_operations(project_id):
+    return refine.RefineProject(refine.RefineServer(),project_id).get_operations()
+
+
 def find(name,path):
     for root,dirs,files in os.walk(path,topdown=False):
         for fname in files:
@@ -252,6 +257,15 @@ def input_path_convenient(prompt):
             print('File not Found.')
 
 
+def returnRetro_Description(project_id,op_index):
+    feedback=get_operations(project_id)
+    retro_desc=feedback.read()
+    JSON_retro=json.loads(retro_desc)
+    print('this is the json retro%s'%JSON_retro)
+    # newretro=retro_desc[1:len(retro_desc)]
+    return JSON_retro['entries'][op_index]['description']
+
+
 def main():
     userinputpath=input_path_convenient('please input CSV name:')
     userinputname=raw_input('please input new project name:')
@@ -259,9 +273,10 @@ def main():
     project_id=create_project(userinputpath,userinputname)
     print(project_id)
     # test get_cell_value
-    rows=get_cell_value(project_id,columnIndex=1)
-    pprint(rows)
-
+    # how many changes from retrospective provenance: do_json
+    mass_edit(project_id,'sponsor',edits=[{'count': 4, 'value': u'NORDDEUTSCHER LLOYD BREMEN'}, {'count': 2, 'value': u'NORDDEUTSCHER LLOYD  BREMEN'}])
+    retro_desc=returnRetro_Description(project_id,0)
+    print(retro_desc)
     # test apply json file
     # apply_operations(project_id,userinputjson)
 

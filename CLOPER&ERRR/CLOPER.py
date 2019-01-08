@@ -5,6 +5,7 @@ import json
 # import sys
 # sys.path.append('/Users/barbaralee/WT-summer-2018-Lan-Li/OpenRefine3Operations/Menu_case/Python_command/Openrefine-client reproducible json/script')
 import os
+from collections import OrderedDict
 from pprint import pprint
 
 import OpenRefineOperations as OR
@@ -110,6 +111,7 @@ def main():
             print(projectname)
             # f.write('Get Project Name')
         elif choice==2:
+            opindex=0
             userinputpath=OR.input_path_convenient('please input CSV name:')
             userinputname=raw_input('please input new project name:')
             projectID=OR.create_project(userinputpath,userinputname)
@@ -126,18 +128,23 @@ def main():
                     print(content[i])
             userrenamechoice=CheckColumnName('rename',projectID)
             while userrenamechoice.lower()!='n':
-                renamedicts={}
+                renamedicts=OrderedDict()
                 renamedicts['op']='core/column-rename'
                 newcolumnname=raw_input("Enter the new column name:")
                 renamedicts['description']='Rename column %s to %s'%(userrenamechoice, newcolumnname)
                 renamedicts['oldColumnName']='%s'%userrenamechoice
                 renamedicts['newColumnName']='%s'%newcolumnname
-                result.append(renamedicts)
                 OR.rename_column(projectID,userrenamechoice,newcolumnname)
+                # retrospective description after the operation
+                No_changes=OR.returnRetro_Description(projectID,opindex)
+                renamedicts['changes']='%s'%No_changes
+                result.append(renamedicts)
+                opindex+=1
                 userrenamechoice=CheckColumnName('rename',projectID)
 
             # further operations
             usercolumn=CheckColumnName('Data Cleaning',projectID)
+            print('this is the op index:%s'%opindex)
             while usercolumn.lower()!='n':
                 columnIndex=GetColumnName(projectID).index(usercolumn)
                 print(usercolumn)
@@ -152,79 +159,67 @@ def main():
                         'Exit this column',
                     ])
                     if userOperates==1:
-                        ClusterRelabeldicts={}
+                        ClusterRelabeldicts=OrderedDict()
                         ClusterRelabeldicts['op']='core/mass-edit'
                         ClusterRelabeldicts['description']='Mass edit cells in column %s'%usercolumn
                         ClusterRelabeldicts['engineConfig']={}
                         ClusterRelabeldicts['engineConfig']['mode']='row-based'
-                        ClusterRelabeldicts['engineConfig']['facets']='[]'
+                        ClusterRelabeldicts['engineConfig']['facets']=[]
                         ClusterRelabeldicts['columnName']='%s'%usercolumn
                         ClusterRelabeldicts['expression']='value'
 
                         # print("please choose clustering type:")
-                        print("1. binning")
-                        print("2. knn")
-                        userClusterer=raw_input("please choose clustering type:")
-                        if userClusterer=='1':
-                            ClusterRelabeldicts['Cluster-type']='binning'
-                            userFunction=prompt_options([
+                        cluster_info=[]
+                        cluster_type=['binning','knn',]
+                        userClusterer=prompt_options(cluster_type)
+                        cluster_info.append(cluster_type[userClusterer-1])
+                        if userClusterer==1:
+                            cluster_function=[
                                 'fingerprint',
                                 'ngram-fingerprint',
                                 'metaphone3',
                                 'cologne-phonetic',
-                            ])
-                            if userFunction==1:
-                                ClusterRelabeldicts['Cluster-function']='fingerprint'
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='fingerprint')
-                            elif userFunction==2:
-                                ClusterRelabeldicts['Cluster-function']='ngram-fingerprint'
-                                params=raw_input("Enter the params for Ngram size:")
-                                ClusterRelabeldicts['Cluster-params']='%s'%params
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='ngram-fingerprint',params=params)
-                            elif userFunction==3:
-                                ClusterRelabeldicts['Cluster-function']='metaphone3'
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='metaphone3')
-                            elif userFunction==4:
-                                ClusterRelabeldicts['Cluster-function']='cologne-phonetic'
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='cologne-phonetic')
+                            ]
+                            userFunction=prompt_options(cluster_function)
+                            cluster_info.append(cluster_function[userFunction-1])
+                            if userFunction==2:
+                                ngram_size=raw_input("Enter the params for Ngram size:")
+                                params={'ngram-size':ngram_size}
+                                cluster_info.append(params)
+                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type=cluster_type[userClusterer-1],function=cluster_function[userFunction-1],params=params)
+                            else:
+                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type=cluster_type[userClusterer-1],function=cluster_function[userFunction-1])
 
-                        elif userClusterer=='2':
-                            ClusterRelabeldicts['Cluster-type']='knn'
-                            userKNNfunction=prompt_options([
+                        elif userClusterer==2:
+                            cluster_function=[
                                'levenshtein',
                                'PPM',
-                            ])
-                            if userKNNfunction==1:
-                                ClusterRelabeldicts['Cluster-function']='levenshtein'
-                                print("Please set the params: ")
-                                userinputradius=float(raw_input("Set the radius: "))
-                                userinputNgramsize=int(raw_input("Set the Bloking Ngram-size: "))
-                                ClusterRelabeldicts['Cluster-params']='{"radius":%f, "blocking-ngram-size":%d}'%(userinputradius,userinputNgramsize)
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='knn',function='levenshtein',params={ 'radius':userinputradius,'blocking-ngram-size':userinputNgramsize})
-                            elif userKNNfunction==2:
-                                ClusterRelabeldicts['Cluster-function']='PPM'
-                                print("Please set the params: ")
-                                userinputradius=float(raw_input("Set the radius: "))
-                                userinputNgramsize=int(raw_input("Set the Bloking Ngram-size: "))
-                                ClusterRelabeldicts['Cluster-params']='{"radius":%f, "blocking-ngram-size":%d}'%(userinputradius,userinputNgramsize)
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='knn',function='PPM',params={ 'radius':userinputradius,'blocking-ngram-size':userinputNgramsize})
+                            ]
+                            userKNNfunction=prompt_options(cluster_function)
+                            cluster_info.append(cluster_function[userKNNfunction-1])
+                            print("Please set the params: ")
+                            userinputradius=float(raw_input("Set the radius: "))
+                            userinputNgramsize=int(raw_input("Set the Bloking Ngram-size: "))
+                            params='{"radius":%f, "blocking-ngram-size":%d}'%(userinputradius,userinputNgramsize)
+                            cluster_info.append(params)
+                            compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type=cluster_type[userClusterer-1],function=cluster_function[userKNNfunction-1],params={ 'radius':userinputradius,'blocking-ngram-size':userinputNgramsize})
                         print(compute_clusters)
                         userClusterinput=raw_input("Do you want to do manually edition for cluster? If not, input N; else input Y: ")
 
                         Edit_from=OR.getFromValue(compute_clusters)
                         Edit_to=OR.getToValue(compute_clusters)
-                        if userClusterinput =='N':
-                            edits=[{'from':f1, 'to':t} for f1,t in zip(Edit_from, Edit_to)]
+                        inneredits=OrderedDict()
+                        inneredits['fromBlank']='false'
+                        inneredits['fromError']='false'
+                        if userClusterinput.lower() =='n':
+                            for f1,t in zip(Edit_from,Edit_to):
+                                inneredits['from']=f1
+                                inneredits['to']=t
+                            edits=[inneredits]
                             print(edits)
                             ClusterRelabeldicts['edits']=edits
                             OR.mass_edit(projectID,usercolumn,edits,expression='value')
-                        elif userClusterinput=='Y':
+                        elif userClusterinput.lower()=='y':
                             print("This is the original values in cluster: ")
                             print(Edit_from)
                             print("This is the values after the chosen cluster: ")
@@ -241,9 +236,28 @@ def main():
                                     to=to
                                     Edit_new_to.append(to)
                             print(Edit_new_to)
-                            mannually_edits=[{'from':f1, 'to':t} for f1,t in zip(Edit_from, Edit_new_to)]
+
+                            for f1,t in zip(Edit_from,Edit_new_to):
+                                inneredits['from']=f1
+                                inneredits['to']=t
+                            mannually_edits=[inneredits]
                             ClusterRelabeldicts['edits']=mannually_edits
+
                             OR.mass_edit(projectID,usercolumn,mannually_edits,expression='value')
+                        #  cluster_info
+                        ClusterRelabeldicts['cluster-info']={}
+                        ClusterRelabeldicts['cluster-info']['Cluster-type']=cluster_info[0]
+                        ClusterRelabeldicts['cluster-info']['Cluster-function']=cluster_info[1]
+                        if len(cluster_info)==3:
+                            ClusterRelabeldicts['cluster-info']['Cluster-params']=cluster_info[2]
+                        # retrospective provenance
+                        print("here is the opindex:%s"%opindex)
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        print(No_changes)
+                        ClusterRelabeldicts['changes']='%s'%No_changes
+                        result.append(ClusterRelabeldicts)
+                        opindex+=1
+
 
                     elif userOperates==2:
                         while True:
@@ -260,7 +274,7 @@ def main():
                                 'Blank out cells',
                                 'exit',
                             ])
-                            text_transform={}
+                            text_transform=OrderedDict()
                             text_transform['op']='core/text-transform'
                             text_transform['engineConfig']={}
                             text_transform['engineConfig']['mode']='row-based'
@@ -294,15 +308,22 @@ def main():
                             elif userchoice==11:
                                 if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                                     break
+                            text_transform['description']='Text transform on cells in column %s using expression %s'%(usercolumn,text_transform['expression'])
+
+                            # do operation text_transform
                             OR.text_transform(projectID,usercolumn,text_transform['expression'])
                             tolist=OR.get_cell_value(projectID,columnIndex)
                             text_transform['edit']=returnEdit(fromlist,tolist)
                             pprint(text_transform['edit'])
-                            text_transform['description']='Text transform on cells in column %s using expression %s'%(usercolumn,text_transform['expression'])
+                            print('here the operation index:%s'%opindex)
+                            No_changes=OR.returnRetro_Description(projectID,opindex)
+                            text_transform['changes']='%s'%No_changes
+                            opindex+=1
                             result.append(text_transform)
 
+
                     elif userOperates==3:
-                        Splitdicts={}
+                        Splitdicts=OrderedDict()
                         Splitdicts['op']='core/column-split'
                         Splitdicts['description']='Split column %s by separator'%usercolumn
                         Splitdicts['engineConfig']={}
@@ -318,12 +339,17 @@ def main():
                         Splitdicts['separator']='%s'%userSeparator
                         Splitdicts['regex']='false'
                         Splitdicts['maxColumns']=0
-                        result.append(Splitdicts)
+                        # do operation
                         OR.split_column(projectID,usercolumn,userSeparator,remove_original_column=usersetremove)
+                        # retrospective
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        Splitdicts['changes']='%s'%No_changes
+                        result.append(Splitdicts)
+                        opindex+=1
                         # something special here
                         # if split into several columns, then usercolumn will change
                     elif userOperates==4:
-                        Onedicts={}
+                        Onedicts=OrderedDict()
                         Onedicts['op']='single-edit'
                         userrowindex=int(raw_input('input the row number for edits, row number starts from 0:'))
                         usercellindex=int(raw_input('input the column number for edits:'))
@@ -345,16 +371,26 @@ def main():
                         Onedicts['cellIndex']=usercellindex
                         Onedicts['type']=usertype
                         Onedicts['edit']=edit
-                        result.append(Onedicts)
-
+                        # do operation
                         OR.single_edit(projectID,userrowindex,usercellindex,usertype,usernewcell)
+
+                        # retrospective provenance
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        Onedicts['changes']='%s'%No_changes
+                        result.append(Onedicts)
+                        opindex+=1
                     elif userOperates==5:
-                        stardicts={}
+                        stardicts=OrderedDict()
                         stardicts['op']='star-row'
                         rowindex=int(raw_input('input the row number, row number starts from 0:'))
                         stardicts['rowIndex']=rowindex
-                        result.append(stardicts)
                         OR.star_row(projectID,rowindex,starred=True)
+
+                        # retrospective provenance
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        stardicts['changes']='%s'%No_changes
+                        result.append(stardicts)
+                        opindex+=1
                     elif userOperates==6:
                         if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                             break

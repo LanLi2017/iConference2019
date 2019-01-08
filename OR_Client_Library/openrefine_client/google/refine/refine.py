@@ -257,6 +257,8 @@ class RefineProject:
             else:
                 server = RefineServer(server)
         self.server = server
+        self.refine_host=REFINE_HOST
+        self.refine_port=REFINE_PORT
         if not project_id:
             raise Exception('Missing OpenRefine project ID')
         self.project_id = project_id
@@ -347,6 +349,13 @@ class RefineProject:
             self.wait_until_idle()
             return 'ok'
         return response_json['code']  # can be 'ok' or 'pending'
+
+
+    def get_operations(self):
+        #response_json = self.do_json('get-operations?project={}'.format(self.project_id))
+        response_json = urllib2.urlopen("http://{}:{}/command/core/get-operations?project={}".format(  self.refine_host,self.refine_port,self.project_id))
+        return response_json  # can be 'ok' or 'pending'
+
 
     def export(self, export_format='tsv'):
         """Return a fileobject of a project's data."""
