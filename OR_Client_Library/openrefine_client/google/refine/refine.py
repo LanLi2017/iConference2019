@@ -275,11 +275,6 @@ class RefineProject:
         # following filled in by get_reconciliation_services
         self.recon_services = None
 
-    def get_cell_value(self):
-        # rr=RowsResponseFactory(columnIndex)
-        rr=self.do_json('get-rows')
-        return rr['rows']
-
     def project_name(self):
         return Refine(self.server).get_project_name(self.project_id)
 
@@ -327,6 +322,11 @@ class RefineProject:
         self.rows_response_factory = RowsResponseFactory(column_index)
         # TODO: implement rest
         return response
+
+    def get_cell_value(self):
+        # rr=RowsResponseFactory(columnIndex)
+        rr=self.do_json('get-rows')
+        return rr['rows']
 
     def get_preference(self, name):
         """Returns the (OR_JSON) value of a given preference setting."""
@@ -394,7 +394,7 @@ class RefineProject:
         response = self.do_json('compute-facets')
         return self.engine.facets_response(response)
 
-    def get_rows(self, facets=None, sort_by=None, start=0, limit=10):
+    def get_rows(self, facets=None, sort_by=None, start=1, limit=20):
         if facets:
             self.engine.set_facets(facets)
         if sort_by is not None:

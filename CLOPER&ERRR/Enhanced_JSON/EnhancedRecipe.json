@@ -1,170 +1,474 @@
 [
   {
-    "op": "core/text-transform", 
-    "description": "Text transform on cells in column sponsor using expression To lowercase", 
+    "op": "core/column-split", 
+    "description": "Split column sponsor by separator", 
     "engineConfig": {
       "facets": [], 
       "mode": "row-based"
     }, 
     "columnName": "sponsor", 
-    "expression": "value.toLowercase()", 
-    "onError": "set-to-blank", 
-    "repeat": "false", 
-    "repeatCount": 10, 
-    "edit": [
+    "guessCellType": "true", 
+    "removeOriginalColumn": "false", 
+    "mode": "separator", 
+    "separator": ",", 
+    "regex": "false", 
+    "maxColumns": 0, 
+    "new columns": [
       {
-        "to": {
-          "v": "supper menu, s. s. vaderland, march 18th, 1910."
-        }, 
-        "from": {
-          "v": "Supper Menu, S. S. Vaderland, March 18th, 1910."
-        }
+        "counter": 4, 
+        "value": [
+          {
+            "v": "Supper Menu"
+          }, 
+          {
+            "v": " S. S. Vaderland"
+          }, 
+          {
+            "v": " March 18th"
+          }, 
+          {
+            "v": 1910
+          }
+        ]
       }, 
       {
-        "to": null, 
-        "from": null
+        "counter": 0, 
+        "value": []
       }, 
       {
-        "to": {
-          "v": "moulin"
-        }, 
-        "from": {
-          "v": "Moulin"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Moulin"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "cortland county society of new york"
-        }, 
-        "from": {
-          "v": "CORTLAND COUNTY SOCIETY OF NEW YORK"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "CORTLAND COUNTY SOCIETY OF NEW YORK"
+          }
+        ]
       }, 
       {
-        "to": null, 
-        "from": null
+        "counter": 0, 
+        "value": []
       }, 
       {
-        "to": {
-          "v": "gramercy inn; h.r. weissberg hotel corp."
-        }, 
-        "from": {
-          "v": "Gramercy Inn; H.R. Weissberg Hotel Corp."
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Gramercy Inn; H.R. Weissberg Hotel Corp."
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "bethlehem steel club"
-        }, 
-        "from": {
-          "v": "Bethlehem Steel Club"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Bethlehem Steel Club"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "summit house"
-        }, 
-        "from": {
-          "v": "SUMMIT HOUSE"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "SUMMIT HOUSE"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "the ambassador"
-        }, 
-        "from": {
-          "v": "The Ambassador"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "The Ambassador"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "cavanagh's"
-        }, 
-        "from": {
-          "v": "Cavanagh's"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Cavanagh's"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "toyo kisen kaisha"
-        }, 
-        "from": {
-          "v": "TOYO KISEN KAISHA"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "TOYO KISEN KAISHA"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "hotel astor"
-        }, 
-        "from": {
-          "v": "Hotel Astor"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Hotel Astor"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "holland america cruises"
-        }, 
-        "from": {
-          "v": "Holland America Cruises"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Holland America Cruises"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "the causerie"
-        }, 
-        "from": {
-          "v": "The Causerie"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "The Causerie"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "hotel taft"
-        }, 
-        "from": {
-          "v": "Hotel Taft"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Hotel Taft"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "the flying clipper restaurant"
-        }, 
-        "from": {
-          "v": "The Flying Clipper Restaurant"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "The Flying Clipper Restaurant"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "oceanic steamship co. - s.s.zealandia"
-        }, 
-        "from": {
-          "v": "OCEANIC STEAMSHIP CO. - S.S.ZEALANDIA"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "OCEANIC STEAMSHIP CO. - S.S.ZEALANDIA"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "caronia"
-        }, 
-        "from": {
-          "v": "Caronia"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "Caronia"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "government of state of rhode island"
-        }, 
-        "from": {
-          "v": "GOVERNMENT OF STATE OF RHODE ISLAND"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "GOVERNMENT OF STATE OF RHODE ISLAND"
+          }
+        ]
       }, 
       {
-        "to": {
-          "v": "new england society of northeastern pennsylvania"
-        }, 
-        "from": {
-          "v": "NEW ENGLAND SOCIETY OF NORTHEASTERN PENNSYLVANIA"
-        }
+        "counter": 1, 
+        "value": [
+          {
+            "v": "NEW ENGLAND SOCIETY OF NORTHEASTERN PENNSYLVANIA"
+          }
+        ]
       }
     ], 
-    "changes": "Text transform on 102 cells in column sponsor: value.toLowercase()"
+    "changes": "Split 102 cell(s) in column sponsor into several columns by separator"
+  }, 
+  {
+    "op": "core/column-split", 
+    "description": "Split column sponsor by separator", 
+    "engineConfig": {
+      "facets": [], 
+      "mode": "row-based"
+    }, 
+    "columnName": "sponsor", 
+    "guessCellType": "true", 
+    "removeOriginalColumn": "false", 
+    "mode": "separator", 
+    "separator": ",", 
+    "regex": "false", 
+    "maxColumns": 0, 
+    "new columns": [
+      {
+        "counter": 8, 
+        "value": [
+          {
+            "v": "Supper Menu"
+          }, 
+          {
+            "v": " S. S. Vaderland"
+          }, 
+          {
+            "v": " March 18th"
+          }, 
+          {
+            "v": 1910
+          }, 
+          {
+            "v": "Supper Menu"
+          }, 
+          {
+            "v": " S. S. Vaderland"
+          }, 
+          {
+            "v": " March 18th"
+          }, 
+          {
+            "v": 1910
+          }
+        ]
+      }, 
+      {
+        "counter": 0, 
+        "value": []
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Moulin"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Moulin"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "CORTLAND COUNTY SOCIETY OF NEW YORK"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "CORTLAND COUNTY SOCIETY OF NEW YORK"
+          }
+        ]
+      }, 
+      {
+        "counter": 0, 
+        "value": []
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Gramercy Inn; H.R. Weissberg Hotel Corp."
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Gramercy Inn; H.R. Weissberg Hotel Corp."
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Bethlehem Steel Club"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Bethlehem Steel Club"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "SUMMIT HOUSE"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "SUMMIT HOUSE"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "The Ambassador"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "The Ambassador"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Cavanagh's"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Cavanagh's"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "TOYO KISEN KAISHA"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "TOYO KISEN KAISHA"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Hotel Astor"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Hotel Astor"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Holland America Cruises"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Holland America Cruises"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "The Causerie"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "The Causerie"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Hotel Taft"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Hotel Taft"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "The Flying Clipper Restaurant"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "The Flying Clipper Restaurant"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "OCEANIC STEAMSHIP CO. - S.S.ZEALANDIA"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "OCEANIC STEAMSHIP CO. - S.S.ZEALANDIA"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "Caronia"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "Caronia"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "GOVERNMENT OF STATE OF RHODE ISLAND"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "GOVERNMENT OF STATE OF RHODE ISLAND"
+          }
+        ]
+      }, 
+      {
+        "counter": 5, 
+        "value": [
+          {
+            "v": "NEW ENGLAND SOCIETY OF NORTHEASTERN PENNSYLVANIA"
+          }, 
+          null, 
+          null, 
+          null, 
+          {
+            "v": "NEW ENGLAND SOCIETY OF NORTHEASTERN PENNSYLVANIA"
+          }
+        ]
+      }
+    ], 
+    "changes": "Split 102 cell(s) in column sponsor into several columns by separator"
   }
 ]

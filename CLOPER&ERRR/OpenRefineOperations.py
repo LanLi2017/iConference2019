@@ -59,6 +59,7 @@ def get_models(project_id):
 
 
 def get_cell_value(project_id,columnIndex):
+    # split break.....
     # nestedlist: [{u'cells': [{u'v': u'10136'},....{}]},{u 'cells': [...]}]
     # The cellIndex is an index for that column's data into the list returned from get_rows().
     # 'from': cell_value, 'to': new_cell_value
@@ -73,6 +74,17 @@ def get_single_cell_value(project_id,cellIndex, rowIndex):
     nested_list=refine.RefineProject(refine.RefineServer(),project_id).get_cell_value()
     aim_single_cell_value=nested_list[rowIndex]['cells'][cellIndex]
     return aim_single_cell_value
+
+
+def get_split_cell_value(project_id,origin_column_length):
+    nested_list=refine.RefineProject(refine.RefineServer(),project_id).get_cell_value()
+    AimcellValue=[]
+    counter=[]
+    for inner_dicts in nested_list:
+        if len(inner_dicts['cells'])>origin_column_length:
+            counter.append(len(inner_dicts['cells'])-origin_column_length-1)
+            AimcellValue.append(inner_dicts['cells'][origin_column_length+1:])
+    return counter,AimcellValue
 
 
 def get_preference(project_id,name):
@@ -109,7 +121,7 @@ def compute_facets(project_id,facets=None):
     return refine.RefineProject(refine.RefineServer(),project_id).compute_facets(facets)
 
 
-def get_rows(project_id,facets=None,sort_by=None,start=0,limit=10):
+def get_rows(project_id,facets=None,sort_by=None,start=1,limit=20):
     return refine.RefineProject(refine.RefineServer(),project_id).get_rows(facets,sort_by,start,limit)
 
 
@@ -274,7 +286,8 @@ def main():
     print(project_id)
     # test get_cell_value
     # how many changes from retrospective provenance: do_json
-    mass_edit(project_id,'sponsor',edits=[{'count': 4, 'value': u'NORDDEUTSCHER LLOYD BREMEN'}, {'count': 2, 'value': u'NORDDEUTSCHER LLOYD  BREMEN'}])
+    split_column(project_id,'sponsor', separator=',',remove_original_column=True)
+    print(zip(get_split_cell_value(project_id,20)[0],get_split_cell_value(project_id,20)[1]))
     retro_desc=returnRetro_Description(project_id,0)
     print(retro_desc)
     # test apply json file

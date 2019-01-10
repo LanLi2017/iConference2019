@@ -71,6 +71,13 @@ def GetColumnName(projectID):
     return column_name
 
 
+def GetColumnLength(projectID):
+    response=OR.get_models(projectID)
+    column_model = response['columnModel']
+    column_name = [column['name'] for column in column_model['columns']]
+    return len(column_name)-1
+
+
 def CheckColumnName(op,projectid):
     columnnamelist=GetColumnName(projectid)
     print('column name list : {}\n'.format(columnnamelist))
@@ -87,6 +94,10 @@ def returnEdit(fromcelllist, tocelllist):
     # edit:[{'from':{}, 'to':}]
     edit=[{'from':f1, 'to':t} for f1,t in zip(fromcelllist, tocelllist)]
     return edit
+
+def returnchanges(counterlist, valuelist):
+    changes=[{'counter': c1, 'value': v1} for c1,v1 in zip(counterlist,valuelist)]
+    return changes
 
 
 def main():
@@ -144,11 +155,11 @@ def main():
 
             # further operations
             usercolumn=CheckColumnName('Data Cleaning',projectID)
-            print('this is the op index:%s'%opindex)
+            column_length=GetColumnLength(projectID)
+            print('this is the table length:%s'%column_length)
+
             while usercolumn.lower()!='n':
                 columnIndex=GetColumnName(projectID).index(usercolumn)
-                print(usercolumn)
-                print(columnIndex)
                 while True:
                     userOperates=prompt_options([
                         'Cluster and Edit',
@@ -340,9 +351,16 @@ def main():
                         Splitdicts['separator']='%s'%userSeparator
                         Splitdicts['regex']='false'
                         Splitdicts['maxColumns']=0
+                        original_columns=GetColumnName(projectID)
                         # do operation
                         OR.split_column(projectID,usercolumn,userSeparator,remove_original_column=usersetremove)
                         # retrospective
+                        current_columns=GetColumnName(projectID)
+                        diff_columns=filter(lambda x: x not in original_columns,current_columns)
+                        Splitdicts['new columns']='%s'%diff_columns
+                        number_col_changes=OR.get_split_cell_value(projectID,column_length)[0]
+                        act_col_changes=OR.get_split_cell_value(projectID,column_length)[1]
+                        Splitdicts['new columns']=returnchanges(number_col_changes,act_col_changes)
                         No_changes=OR.returnRetro_Description(projectID,opindex)
                         Splitdicts['changes']='%s'%No_changes
                         result.append(Splitdicts)
