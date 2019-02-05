@@ -1,50 +1,382 @@
 [
   {
-    "newColumnName": "news", 
-    "oldColumnName": "event", 
-    "opname": "rename", 
-    "description": "Rename column event to news", 
-    "op": "core/column-rename"
+    "op": "core/column-rename", 
+    "description": "Rename column id to index", 
+    "oldColumnName": "id", 
+    "newColumnName": "index", 
+    "changes": "Rename column id to index"
   }, 
   {
-    "Cluster-function": "fingerprint", 
-    "description": "Mass edit cells in column news", 
-    "columnName": "news", 
+    "op": "core/mass-edit", 
+    "description": "Mass edit cells in column sponsor", 
     "engineConfig": {
-      "facets": "[]", 
+      "facets": [], 
       "mode": "row-based"
     }, 
-    "opname": "Cluster_and_Relabel", 
-    "Cluster-type": "binning", 
-    "expression": "value", 
-    "op": "core/mass-edit"
-  }, 
-  {
-    "repeat": "false", 
-    "description": "Text transform on cells in column news using expression value.trim()", 
-    "onError": "set-to-blank", 
-    "repeatCount": 10, 
-    "columnName": "news", 
-    "engineConfig": {
-      "facets": "[]", 
-      "mode": "row-based"
-    }, 
-    "opname": "TrimwhiteSpace", 
-    "expression": "value.trim()", 
-    "op": "core/text-transform"
-  }, 
-  {
-    "repeat": "false", 
-    "description": "Text transform on cells in column sponsor using expression value.toLowercase()", 
-    "onError": "set-to-blank", 
-    "repeatCount": 10, 
     "columnName": "sponsor", 
+    "expression": "value", 
+    "edits": [
+      {
+        "fromBlank": "false", 
+        "fromError": "false", 
+        "from": [
+          "NORDDEUTSCHER LLOYD BREMEN", 
+          "NORDDEUTSCHER LLOYD  BREMEN"
+        ], 
+        "to": "NORDDEUTSCHER LLOYD BREMEN"
+      }
+    ], 
+    "cluster-info": {
+      "Cluster-type": "binning", 
+      "Cluster-function": "fingerprint"
+    }, 
+    "changes": "Mass edit 6 cells in column sponsor"
+  }, 
+  {
+    "op": "core/text-transform", 
+    "description": "Text transform on cells in column sponsor using expression To lowercase", 
     "engineConfig": {
-      "facets": "[]", 
+      "facets": [], 
       "mode": "row-based"
     }, 
-    "opname": "toLowercase", 
+    "columnName": "sponsor", 
     "expression": "value.toLowercase()", 
-    "op": "core/text-transform"
+    "onError": "set-to-blank", 
+    "repeat": "false", 
+    "repeatCount": 10, 
+    "edit": [
+      {
+        "to": {
+          "v": "supper menu, s. s. vaderland, march 18th, 1910."
+        }, 
+        "from": {
+          "v": "Supper Menu, S. S. Vaderland, March 18th, 1910."
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "moulin"
+        }, 
+        "from": {
+          "v": "Moulin"
+        }
+      }, 
+      {
+        "to": {
+          "v": "cortland county society of new york"
+        }, 
+        "from": {
+          "v": "CORTLAND COUNTY SOCIETY OF NEW YORK"
+        }
+      }, 
+      {
+        "to": null, 
+        "from": null
+      }, 
+      {
+        "to": {
+          "v": "gramercy inn; h.r. weissberg hotel corp."
+        }, 
+        "from": {
+          "v": "Gramercy Inn; H.R. Weissberg Hotel Corp."
+        }
+      }, 
+      {
+        "to": {
+          "v": "bethlehem steel club"
+        }, 
+        "from": {
+          "v": "Bethlehem Steel Club"
+        }
+      }, 
+      {
+        "to": {
+          "v": "summit house"
+        }, 
+        "from": {
+          "v": "SUMMIT HOUSE"
+        }
+      }, 
+      {
+        "to": {
+          "v": "the ambassador"
+        }, 
+        "from": {
+          "v": "The Ambassador"
+        }
+      }, 
+      {
+        "to": {
+          "v": "cavanagh's"
+        }, 
+        "from": {
+          "v": "Cavanagh's"
+        }
+      }, 
+      {
+        "to": {
+          "v": "toyo kisen kaisha"
+        }, 
+        "from": {
+          "v": "TOYO KISEN KAISHA"
+        }
+      }, 
+      {
+        "to": {
+          "v": "hotel astor"
+        }, 
+        "from": {
+          "v": "Hotel Astor"
+        }
+      }, 
+      {
+        "to": {
+          "v": "holland america cruises"
+        }, 
+        "from": {
+          "v": "Holland America Cruises"
+        }
+      }, 
+      {
+        "to": {
+          "v": "the causerie"
+        }, 
+        "from": {
+          "v": "The Causerie"
+        }
+      }, 
+      {
+        "to": {
+          "v": "hotel taft"
+        }, 
+        "from": {
+          "v": "Hotel Taft"
+        }
+      }, 
+      {
+        "to": {
+          "v": "the flying clipper restaurant"
+        }, 
+        "from": {
+          "v": "The Flying Clipper Restaurant"
+        }
+      }, 
+      {
+        "to": {
+          "v": "oceanic steamship co. - s.s.zealandia"
+        }, 
+        "from": {
+          "v": "OCEANIC STEAMSHIP CO. - S.S.ZEALANDIA"
+        }
+      }, 
+      {
+        "to": {
+          "v": "caronia"
+        }, 
+        "from": {
+          "v": "Caronia"
+        }
+      }, 
+      {
+        "to": {
+          "v": "government of state of rhode island"
+        }, 
+        "from": {
+          "v": "GOVERNMENT OF STATE OF RHODE ISLAND"
+        }
+      }, 
+      {
+        "to": {
+          "v": "new england society of northeastern pennsylvania"
+        }, 
+        "from": {
+          "v": "NEW ENGLAND SOCIETY OF NORTHEASTERN PENNSYLVANIA"
+        }
+      }
+    ], 
+    "changes": "Text transform on 102 cells in column sponsor: value.toLowercase()"
+  }, 
+  {
+    "op": "core/column-split", 
+    "description": "Split column sponsor by separator", 
+    "engineConfig": {
+      "facets": [], 
+      "mode": "row-based"
+    }, 
+    "columnName": "sponsor", 
+    "guessCellType": "true", 
+    "removeOriginalColumn": "true", 
+    "mode": "separator", 
+    "separator": ",", 
+    "regex": "false", 
+    "maxColumns": 0, 
+    "new columns": [
+      {
+        "counter": 4, 
+        "value": [
+          {
+            "v": "supper menu"
+          }, 
+          {
+            "v": " s. s. vaderland"
+          }, 
+          {
+            "v": " march 18th"
+          }, 
+          {
+            "v": 1910
+          }
+        ]
+      }, 
+      {
+        "counter": 0, 
+        "value": []
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "moulin"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "cortland county society of new york"
+          }
+        ]
+      }, 
+      {
+        "counter": 0, 
+        "value": []
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "gramercy inn; h.r. weissberg hotel corp."
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "bethlehem steel club"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "summit house"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "the ambassador"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "cavanagh's"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "toyo kisen kaisha"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "hotel astor"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "holland america cruises"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "the causerie"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "hotel taft"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "the flying clipper restaurant"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "oceanic steamship co. - s.s.zealandia"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "caronia"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "government of state of rhode island"
+          }
+        ]
+      }, 
+      {
+        "counter": 1, 
+        "value": [
+          {
+            "v": "new england society of northeastern pennsylvania"
+          }
+        ]
+      }
+    ], 
+    "changes": "Split 102 cell(s) in column sponsor into several columns by separator"
   }
 ]

@@ -1,4 +1,6 @@
+import json
 import os
+from pprint import pprint
 
 from OR_Client_Library.openrefine_client.google.refine import refine
 
@@ -56,6 +58,35 @@ def get_models(project_id):
     return refine.RefineProject(refine.RefineServer(),project_id).get_models()
 
 
+def get_cell_value(project_id,columnIndex):
+    # split break.....
+    # nestedlist: [{u'cells': [{u'v': u'10136'},....{}]},{u 'cells': [...]}]
+    # The cellIndex is an index for that column's data into the list returned from get_rows().
+    # 'from': cell_value, 'to': new_cell_value
+    nested_list=refine.RefineProject(refine.RefineServer(),project_id).get_cell_value()
+    AimCellValue=[]
+    for inner_dicts in nested_list:
+        AimCellValue.append(inner_dicts['cells'][columnIndex])
+    return AimCellValue
+
+
+def get_single_cell_value(project_id,cellIndex, rowIndex):
+    nested_list=refine.RefineProject(refine.RefineServer(),project_id).get_cell_value()
+    aim_single_cell_value=nested_list[rowIndex]['cells'][cellIndex]
+    return aim_single_cell_value
+
+
+def get_split_cell_value(project_id,origin_column_length):
+    nested_list=refine.RefineProject(refine.RefineServer(),project_id).get_cell_value()
+    AimcellValue=[]
+    counter=[]
+    for inner_dicts in nested_list:
+        if len(inner_dicts['cells'])>origin_column_length:
+            counter.append(len(inner_dicts['cells'])-origin_column_length-1)
+            AimcellValue.append(inner_dicts['cells'][origin_column_length+1:])
+    return counter,AimcellValue
+
+
 def get_preference(project_id,name):
     # get preference: returns the (OR_JSON) value of a given preference setting.
     return refine.RefineProject(refine.RefineServer(),project_id).get_preference(name)
@@ -90,7 +121,7 @@ def compute_facets(project_id,facets=None):
     return refine.RefineProject(refine.RefineServer(),project_id).compute_facets(facets)
 
 
-def get_rows(project_id,facets=None,sort_by=None,start=0,limit=10):
+def get_rows(project_id,facets=None,sort_by=None,start=1,limit=20):
     return refine.RefineProject(refine.RefineServer(),project_id).get_rows(facets,sort_by,start,limit)
 
 
@@ -141,6 +172,10 @@ def edit(project_id,column,edit_from,edit_to):
 
 def mass_edit(project_id,column,edits,expression='value'):
     return refine.RefineProject(refine.RefineServer(),project_id).mass_edit(column,edits,expression)
+
+
+def single_edit(project_id,row,cell,type,value):
+    return refine.RefineProject(refine.RefineServer(),project_id).single_edit(row,cell,type,value)
 
 
 def annotate_one_row(project_id,row,annotation,state=True):
@@ -210,6 +245,10 @@ def reconcile(project_id,column,service,reconciliation_type=None,reconciliation_
     return refine.RefineProject(refine.RefineServer(),project_id).reconcile(column,service,reconciliation_type,reconciliation_config)
 
 
+def get_operations(project_id):
+    return refine.RefineProject(refine.RefineServer(),project_id).get_operations()
+
+
 def find(name,path):
     for root,dirs,files in os.walk(path,topdown=False):
         for fname in files:
@@ -230,14 +269,29 @@ def input_path_convenient(prompt):
             print('File not Found.')
 
 
+def returnRetro_Description(project_id,op_index):
+    feedback=get_operations(project_id)
+    retro_desc=feedback.read()
+    JSON_retro=json.loads(retro_desc)
+    print('this is the json retro%s'%JSON_retro)
+    # newretro=retro_desc[1:len(retro_desc)]
+    return JSON_retro['entries'][op_index]['description']
+
+
 def main():
     userinputpath=input_path_convenient('please input CSV name:')
     userinputname=raw_input('please input new project name:')
-    userinputjson=input_path_convenient('please input OR_JSON name:')
+    # userinputjson=input_path_convenient('please input OR_JSON name:')
     project_id=create_project(userinputpath,userinputname)
     print(project_id)
+    # test get_cell_value
+    # how many changes from retrospective provenance: do_json
+    split_column(project_id,'sponsor', separator=',',remove_original_column=True)
+    print(zip(get_split_cell_value(project_id,20)[0],get_split_cell_value(project_id,20)[1]))
+    retro_desc=returnRetro_Description(project_id,0)
+    print(retro_desc)
     # test apply json file
-    apply_operations(project_id,userinputjson)
+    # apply_operations(project_id,userinputjson)
 
 
 if __name__=='__main__':

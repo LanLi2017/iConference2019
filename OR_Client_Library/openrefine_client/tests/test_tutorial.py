@@ -16,8 +16,10 @@ OPENREFINE_HOST and OPENREFINE_PORT.
 
 import unittest
 
-from google.refine import facet
-from tests import refinetest
+
+from OR_Client_Library.openrefine_client.google.refine import facet
+from OR_Client_Library.openrefine_client.tests import refinetest
+
 
 
 class TutorialTestFacets(refinetest.RefineTestCase):

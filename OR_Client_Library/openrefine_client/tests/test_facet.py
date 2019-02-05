@@ -8,8 +8,8 @@ test_facet.py
 import json
 import unittest
 
-from google.refine.facet import *
 
+from OR_Client_Library.openrefine_client.google.refine.facet import *
 
 class CamelTest(unittest.TestCase):
     def test_to_camel(self):

@@ -257,6 +257,8 @@ class RefineProject:
             else:
                 server = RefineServer(server)
         self.server = server
+        self.refine_host=REFINE_HOST
+        self.refine_port=REFINE_PORT
         if not project_id:
             raise Exception('Missing OpenRefine project ID')
         self.project_id = project_id
@@ -321,6 +323,11 @@ class RefineProject:
         # TODO: implement rest
         return response
 
+    def get_cell_value(self):
+        # rr=RowsResponseFactory(columnIndex)
+        rr=self.do_json('get-rows')
+        return rr['rows']
+
     def get_preference(self, name):
         """Returns the (OR_JSON) value of a given preference setting."""
         response = self.server.urlopen_json('get-preference',
@@ -342,6 +349,13 @@ class RefineProject:
             self.wait_until_idle()
             return 'ok'
         return response_json['code']  # can be 'ok' or 'pending'
+
+
+    def get_operations(self):
+        #response_json = self.do_json('get-operations?project={}'.format(self.project_id))
+        response_json = urllib2.urlopen("http://{}:{}/command/core/get-operations?project={}".format(  self.refine_host,self.refine_port,self.project_id))
+        return response_json  # can be 'ok' or 'pending'
+
 
     def export(self, export_format='tsv'):
         """Return a fileobject of a project's data."""
@@ -380,7 +394,7 @@ class RefineProject:
         response = self.do_json('compute-facets')
         return self.engine.facets_response(response)
 
-    def get_rows(self, facets=None, sort_by=None, start=0, limit=10):
+    def get_rows(self, facets=None, sort_by=None, start=1, limit=20):
         if facets:
             self.engine.set_facets(facets)
         if sort_by is not None:
@@ -414,6 +428,22 @@ class RefineProject:
     def edit(self, column, edit_from, edit_to):
         edits = [{'from': [edit_from], 'to': edit_to}]
         return self.mass_edit(column, edits)
+
+    def single_edit(self, row,cell,type,value):
+        '''
+        row=58
+        cell=5
+        old={"v":"COM"}
+        new={"v":"COMMERCIAL"}
+        :param rowIndex: 58
+        :param cellIndex: 5
+        :param value: [{'from':"COM", 'to': "COMMERCIAL"}]
+        :return:
+        '''
+        # edit=[{'old': old, 'new':new}]
+        # one_edit=json.dumps(edit)
+        return self.do_json('edit-one-cell', { 'row': row,'cell': cell, 'type':type,
+                                              'value': value})
 
     def mass_edit(self, column, edits, expression='value'):
         """edits is [{'from': ['foo'], 'to': 'bar'}, {...}]"""
@@ -456,7 +486,7 @@ class RefineProject:
         if annotation not in ('starred', 'flagged'):
             raise ValueError('annotation must be one of starred or flagged')
         state = 'true' if state is True else 'false'
-        return self.do_json('annotate-one-row', {'row': row.index,
+        return self.do_json('annotate-one-row', {'row': row,
                                                  annotation: state})
 
     def flag_row(self, row, flagged=True):

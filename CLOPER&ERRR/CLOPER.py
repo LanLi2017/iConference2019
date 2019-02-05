@@ -5,6 +5,7 @@ import json
 # import sys
 # sys.path.append('/Users/barbaralee/WT-summer-2018-Lan-Li/OpenRefine3Operations/Menu_case/Python_command/Openrefine-client reproducible json/script')
 import os
+from collections import OrderedDict
 from pprint import pprint
 
 import OpenRefineOperations as OR
@@ -69,6 +70,14 @@ def GetColumnName(projectID):
     column_name = [column['name'] for column in column_model['columns']]
     return column_name
 
+
+def GetColumnLength(projectID):
+    response=OR.get_models(projectID)
+    column_model = response['columnModel']
+    column_name = [column['name'] for column in column_model['columns']]
+    return len(column_name)-1
+
+
 def CheckColumnName(op,projectid):
     columnnamelist=GetColumnName(projectid)
     print('column name list : {}\n'.format(columnnamelist))
@@ -79,6 +88,16 @@ def CheckColumnName(op,projectid):
             return userrenamechoice
         else:
             print("column name not found, please re-enter: ")
+
+
+def returnEdit(fromcelllist, tocelllist):
+    # edit:[{'from':{}, 'to':}]
+    edit=[{'from':f1, 'to':t} for f1,t in zip(fromcelllist, tocelllist)]
+    return edit
+
+def returnchanges(counterlist, valuelist):
+    changes=[{'counter': c1, 'value': v1} for c1,v1 in zip(counterlist,valuelist)]
+    return changes
 
 
 def main():
@@ -103,6 +122,7 @@ def main():
             print(projectname)
             # f.write('Get Project Name')
         elif choice==2:
+            opindex=0
             userinputpath=OR.input_path_convenient('please input CSV name:')
             userinputname=raw_input('please input new project name:')
             projectID=OR.create_project(userinputpath,userinputname)
@@ -119,106 +139,98 @@ def main():
                     print(content[i])
             userrenamechoice=CheckColumnName('rename',projectID)
             while userrenamechoice.lower()!='n':
-                renamedicts={}
+                renamedicts=OrderedDict()
                 renamedicts['op']='core/column-rename'
-                renamedicts['opname']='rename'
                 newcolumnname=raw_input("Enter the new column name:")
                 renamedicts['description']='Rename column %s to %s'%(userrenamechoice, newcolumnname)
                 renamedicts['oldColumnName']='%s'%userrenamechoice
                 renamedicts['newColumnName']='%s'%newcolumnname
-                result.append(renamedicts)
                 OR.rename_column(projectID,userrenamechoice,newcolumnname)
+                # retrospective description after the operation
+                No_changes=OR.returnRetro_Description(projectID,opindex)
+                renamedicts['changes']='%s'%No_changes
+                result.append(renamedicts)
+                opindex+=1
                 userrenamechoice=CheckColumnName('rename',projectID)
 
             # further operations
             usercolumn=CheckColumnName('Data Cleaning',projectID)
+            column_length=GetColumnLength(projectID)
+            print('this is the table length:%s'%column_length)
+
             while usercolumn.lower()!='n':
+                columnIndex=GetColumnName(projectID).index(usercolumn)
                 while True:
                     userOperates=prompt_options([
-                        'Cluster and Relabel',
-                        'Trim Whitespace',
-                        'Lowercase the column value',
-                        'Uppercase the column value',
-                        'Transform the column value to Date',
-                        'Transform the column value to Numeric',
+                        'Cluster and Edit',
+                        'Common transforms',
                         'Split multi-valued cells in column ',
+                        'Single Edit cell',
+                        'star the row',
                         'Exit this column',
                     ])
                     if userOperates==1:
-                        ClusterRelabeldicts={}
+                        ClusterRelabeldicts=OrderedDict()
                         ClusterRelabeldicts['op']='core/mass-edit'
-                        ClusterRelabeldicts['opname']='Cluster_and_Relabel'
                         ClusterRelabeldicts['description']='Mass edit cells in column %s'%usercolumn
                         ClusterRelabeldicts['engineConfig']={}
                         ClusterRelabeldicts['engineConfig']['mode']='row-based'
-                        ClusterRelabeldicts['engineConfig']['facets']='[]'
+                        ClusterRelabeldicts['engineConfig']['facets']=[]
                         ClusterRelabeldicts['columnName']='%s'%usercolumn
                         ClusterRelabeldicts['expression']='value'
 
                         # print("please choose clustering type:")
-                        print("1. binning")
-                        print("2. knn")
-                        userClusterer=raw_input("please choose clustering type:")
-                        if userClusterer=='1':
-                            ClusterRelabeldicts['Cluster-type']='binning'
-                            userFunction=prompt_options([
+                        cluster_info=[]
+                        cluster_type=['binning','knn',]
+                        userClusterer=prompt_options(cluster_type)
+                        cluster_info.append(cluster_type[userClusterer-1])
+                        if userClusterer==1:
+                            cluster_function=[
                                 'fingerprint',
                                 'ngram-fingerprint',
                                 'metaphone3',
                                 'cologne-phonetic',
-                            ])
-                            if userFunction==1:
-                                ClusterRelabeldicts['Cluster-function']='fingerprint'
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='fingerprint')
-                            elif userFunction==2:
-                                ClusterRelabeldicts['Cluster-function']='ngram-fingerprint'
-                                params=raw_input("Enter the params for Ngram size:")
-                                ClusterRelabeldicts['Cluster-params']='%s'%params
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='ngram-fingerprint',params=params)
-                            elif userFunction==3:
-                                ClusterRelabeldicts['Cluster-function']='metaphone3'
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='metaphone3')
-                            elif userFunction==4:
-                                ClusterRelabeldicts['Cluster-function']='cologne-phonetic'
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='binning',function='cologne-phonetic')
+                            ]
+                            userFunction=prompt_options(cluster_function)
+                            cluster_info.append(cluster_function[userFunction-1])
+                            if userFunction==2:
+                                ngram_size=raw_input("Enter the params for Ngram size:")
+                                params={'ngram-size':ngram_size}
+                                cluster_info.append(params)
+                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type=cluster_type[userClusterer-1],function=cluster_function[userFunction-1],params=params)
+                            else:
+                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type=cluster_type[userClusterer-1],function=cluster_function[userFunction-1])
 
-                        elif userClusterer=='2':
-                            ClusterRelabeldicts['Cluster-type']='knn'
-                            userKNNfunction=prompt_options([
+                        elif userClusterer==2:
+                            cluster_function=[
                                'levenshtein',
                                'PPM',
-                            ])
-                            if userKNNfunction==1:
-                                ClusterRelabeldicts['Cluster-function']='levenshtein'
-                                print("Please set the params: ")
-                                userinputradius=float(raw_input("Set the radius: "))
-                                userinputNgramsize=int(raw_input("Set the Bloking Ngram-size: "))
-                                ClusterRelabeldicts['Cluster-params']='{"radius":%f, "blocking-ngram-size":%d}'%(userinputradius,userinputNgramsize)
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='knn',function='levenshtein',params={ 'radius':userinputradius,'blocking-ngram-size':userinputNgramsize})
-                            elif userKNNfunction==2:
-                                ClusterRelabeldicts['Cluster-function']='PPM'
-                                print("Please set the params: ")
-                                userinputradius=float(raw_input("Set the radius: "))
-                                userinputNgramsize=int(raw_input("Set the Bloking Ngram-size: "))
-                                ClusterRelabeldicts['Cluster-params']='{"radius":%f, "blocking-ngram-size":%d}'%(userinputradius,userinputNgramsize)
-                                result.append(ClusterRelabeldicts)
-                                compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type='knn',function='PPM',params={ 'radius':userinputradius,'blocking-ngram-size':userinputNgramsize})
+                            ]
+                            userKNNfunction=prompt_options(cluster_function)
+                            cluster_info.append(cluster_function[userKNNfunction-1])
+                            print("Please set the params: ")
+                            userinputradius=float(raw_input("Set the radius: "))
+                            userinputNgramsize=int(raw_input("Set the Bloking Ngram-size: "))
+                            params='{"radius":%f, "blocking-ngram-size":%d}'%(userinputradius,userinputNgramsize)
+                            cluster_info.append(params)
+                            compute_clusters=OR.compute_clusters(projectID,usercolumn,clusterer_type=cluster_type[userClusterer-1],function=cluster_function[userKNNfunction-1],params={ 'radius':userinputradius,'blocking-ngram-size':userinputNgramsize})
                         print(compute_clusters)
                         userClusterinput=raw_input("Do you want to do manually edition for cluster? If not, input N; else input Y: ")
 
                         Edit_from=OR.getFromValue(compute_clusters)
                         Edit_to=OR.getToValue(compute_clusters)
-                        if userClusterinput =='N':
-                            edits=[{'from':f1, 'to':t} for f1,t in zip(Edit_from, Edit_to)]
+                        inneredits=OrderedDict()
+                        inneredits['fromBlank']='false'
+                        inneredits['fromError']='false'
+                        if userClusterinput.lower() =='n':
+                            for f1,t in zip(Edit_from,Edit_to):
+                                inneredits['from']=f1
+                                inneredits['to']=t
+                            edits=[inneredits]
                             print(edits)
                             ClusterRelabeldicts['edits']=edits
                             OR.mass_edit(projectID,usercolumn,edits,expression='value')
-                        elif userClusterinput=='Y':
+                        elif userClusterinput.lower()=='y':
                             print("This is the original values in cluster: ")
                             print(Edit_from)
                             print("This is the values after the chosen cluster: ")
@@ -235,98 +247,100 @@ def main():
                                     to=to
                                     Edit_new_to.append(to)
                             print(Edit_new_to)
-                            mannually_edits=[{'from':f1, 'to':t} for f1,t in zip(Edit_from, Edit_new_to)]
+
+                            for f1,t in zip(Edit_from,Edit_new_to):
+                                inneredits['from']=f1
+                                inneredits['to']=t
+                            mannually_edits=[inneredits]
                             ClusterRelabeldicts['edits']=mannually_edits
+
                             OR.mass_edit(projectID,usercolumn,mannually_edits,expression='value')
+                        #  cluster_info
+                        ClusterRelabeldicts['cluster-info']={}
+                        ClusterRelabeldicts['cluster-info']['Cluster-type']=cluster_info[0]
+                        ClusterRelabeldicts['cluster-info']['Cluster-function']=cluster_info[1]
+                        if len(cluster_info)==3:
+                            ClusterRelabeldicts['cluster-info']['Cluster-params']=cluster_info[2]
+                        # retrospective provenance
+                        print("here is the opindex:%s"%opindex)
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        print(No_changes)
+                        ClusterRelabeldicts['changes']='%s'%No_changes
+                        result.append(ClusterRelabeldicts)
+                        opindex+=1
+
 
                     elif userOperates==2:
-                        trimdicts={}
-                        trimdicts['op']='core/text-transform'
-                        trimdicts['opname']='TrimwhiteSpace'
-                        trimdicts['description']='Text transform on cells in column %s using expression value.trim()'%usercolumn
-                        trimdicts['engineConfig']={}
-                        trimdicts['engineConfig']['mode']='row-based'
-                        trimdicts['engineConfig']['facets']='[]'
-                        trimdicts['columnName']='%s'%usercolumn
-                        trimdicts['expression']='value.trim()'
-                        trimdicts['onError']='set-to-blank'
-                        trimdicts['repeat']='false'
-                        trimdicts['repeatCount']=10
-                        result.append(trimdicts)
+                        while True:
+                            text_expression=[
+                                'Trim leading and trailing whitespace',
+                                'Collapse consecutive whitespace',
+                                'Unescape HTML entities',
+                                'To titlecase',
+                                'To uppercase',
+                                'To lowercase',
+                                'To number',
+                                'To date',
+                                'To text',
+                                'Blank out cells',
+                                'exit',
+                            ]
+                            userchoice=prompt_options(text_expression)
+                            text_transform=OrderedDict()
+                            text_transform['op']='core/text-transform'
+                            text_transform['description']='Text transform on cells in column %s using expression %s'%(usercolumn,text_expression[userchoice-1])
+                            text_transform['engineConfig']={}
+                            text_transform['engineConfig']['mode']='row-based'
+                            text_transform['engineConfig']['facets']=[]
+                            text_transform['columnName']='%s'%usercolumn
+                            fromlist = OR.get_cell_value(projectID,columnIndex)
+                            if userchoice==1:
+                                text_transform['expression']='value.trim()'
+                                # 'from': get_cell_value(), 'to': get_cell_value()
+                            elif userchoice==2:
+                                text_transform['expression']='value.replace(/\\s+/,' ')'
+                            elif userchoice==3:
+                                text_transform['expression']='value.unescape("html")'
+                            elif userchoice==4:
+                                text_transform['expression']='value.toTitlecase()'
+                            elif userchoice==5:
+                                text_transform['expression']='value.toUppercase()'
+                            elif userchoice==6:
+                                text_transform['expression']='value.toLowercase()'
+                            elif userchoice==7:
+                                text_transform['expression']='value.toNumber()'
+                            elif userchoice==8:
+                                text_transform['expression']='value.toDate()'
+                            elif userchoice==9:
+                                text_transform['expression']='value.toString()'
+                            elif userchoice==10:
+                                text_transform['expression']='null'
+                            elif userchoice==11:
+                                if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
+                                    break
 
-                        OR.text_transform(projectID,usercolumn,'value.trim()')
+                            text_transform['onError']='set-to-blank'
+                            text_transform['repeat']='false'
+                            text_transform['repeatCount']=10
+                            # do operation text_transform
+                            OR.text_transform(projectID,usercolumn,text_transform['expression'])
+                            tolist=OR.get_cell_value(projectID,columnIndex)
+                            text_transform['edit']=returnEdit(fromlist,tolist)
+                            pprint(text_transform['edit'])
+                            print('here the operation index:%s'%opindex)
+                            No_changes=OR.returnRetro_Description(projectID,opindex)
+                            text_transform['changes']='%s'%No_changes
+                            opindex+=1
+                            result.append(text_transform)
+
+
                     elif userOperates==3:
-                        Lowercasedicts={}
-                        Lowercasedicts['op']='core/text-transform'
-                        Lowercasedicts['opname']='toLowercase'
-                        Lowercasedicts['description']='Text transform on cells in column %s using expression value.toLowercase()'%usercolumn
-                        Lowercasedicts['engineConfig']={}
-                        Lowercasedicts['engineConfig']['mode']='row-based'
-                        Lowercasedicts['engineConfig']['facets']='[]'
-                        Lowercasedicts['columnName']='%s'%usercolumn
-                        Lowercasedicts['expression']='value.toLowercase()'
-                        Lowercasedicts['onError']='set-to-blank'
-                        Lowercasedicts['repeat']='false'
-                        Lowercasedicts['repeatCount']=10
-                        result.append(Lowercasedicts)
-                        OR.text_transform(projectID,usercolumn,'value.toLowercase()')
-                    elif userOperates==4:
-
-                        Uppercasedicts={}
-                        Uppercasedicts['op']='core/text-transform'
-                        Uppercasedicts['opname']='toUppercase'
-                        Uppercasedicts['description']='Text transform on cells in column %s using expression value.toUppercase()'%usercolumn
-                        Uppercasedicts['engineConfig']={}
-                        Uppercasedicts['engineConfig']['mode']='row-based'
-                        Uppercasedicts['engineConfig']['facets']='[]'
-                        Uppercasedicts['columnName']='%s'%usercolumn
-                        Uppercasedicts['expression']='value.toUppercase()'
-                        Uppercasedicts['onError']='set-to-blank'
-                        Uppercasedicts['repeat']='false'
-                        Uppercasedicts['repeatCount']=10
-                        result.append(Uppercasedicts)
-
-                        OR.text_transform(projectID,usercolumn,'value.toUppercase()')
-                    elif userOperates==5:
-                        Datedicts={}
-                        Datedicts['op']='core/text-transform'
-                        Datedicts['opname']='ToDate'
-                        Datedicts['description']='Text transform on cells in column %s using expression value.toDate()'%usercolumn
-                        Datedicts['engineConfig']={}
-                        Datedicts['engineConfig']['mode']='row-based'
-                        Datedicts['engineConfig']['facets']='[]'
-                        Datedicts['columnName']='%s'%usercolumn
-                        Datedicts['expression']='value.toDate()'
-                        Datedicts['onError']='set-to-blank'
-                        Datedicts['repeat']='false'
-                        Datedicts['repeatCount']=10
-                        result.append(Datedicts)
-
-                        OR.text_transform(projectID,usercolumn,'value.toDate()')
-                    elif userOperates==6:
-                        Numberdicts={}
-                        Numberdicts['op']='core/text-transform'
-                        Numberdicts['opname']='toNumber'
-                        Numberdicts['description']='Text transform on cells in column %s using expression value.toNumber()'%usercolumn
-                        Numberdicts['engineConfig']={}
-                        Numberdicts['engineConfig']['mode']='row-based'
-                        Numberdicts['engineConfig']['facets']='[]'
-                        Numberdicts['columnName']='%s'%usercolumn
-                        Numberdicts['expression']='value.toNumber()'
-                        Numberdicts['onError']='set-to-blank'
-                        Numberdicts['repeat']='false'
-                        Numberdicts['repeatCount']=10
-                        result.append(Numberdicts)
-
-                        OR.text_transform(projectID,usercolumn,'value.toNumber()')
-                    elif userOperates==7:
-                        Splitdicts={}
+                        Splitdicts=OrderedDict()
                         Splitdicts['op']='core/column-split'
-                        Splitdicts['opname']='Splitcolumn'
                         Splitdicts['description']='Split column %s by separator'%usercolumn
                         Splitdicts['engineConfig']={}
                         Splitdicts['engineConfig']['mode']='row-based'
-                        Splitdicts['engineConfig']['facets']='[]'
+                        Splitdicts['engineConfig']['facets']=[]
                         Splitdicts['columnName']='%s'%usercolumn
                         Splitdicts['guessCellType']='true'
                         usersetremove=raw_input("Remove the original column or not,set true or false")
@@ -337,11 +351,67 @@ def main():
                         Splitdicts['separator']='%s'%userSeparator
                         Splitdicts['regex']='false'
                         Splitdicts['maxColumns']=0
-                        result.append(Splitdicts)
+                        original_columns=GetColumnName(projectID)
+                        # do operation
                         OR.split_column(projectID,usercolumn,userSeparator,remove_original_column=usersetremove)
+                        # retrospective
+                        current_columns=GetColumnName(projectID)
+                        diff_columns=filter(lambda x: x not in original_columns,current_columns)
+                        Splitdicts['new columns']='%s'%diff_columns
+                        number_col_changes=OR.get_split_cell_value(projectID,column_length)[0]
+                        act_col_changes=OR.get_split_cell_value(projectID,column_length)[1]
+                        Splitdicts['new columns']=returnchanges(number_col_changes,act_col_changes)
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        Splitdicts['changes']='%s'%No_changes
+                        result.append(Splitdicts)
+                        opindex+=1
                         # something special here
                         # if split into several columns, then usercolumn will change
-                    elif userOperates==8:
+                    elif userOperates==4:
+                        Onedicts=OrderedDict()
+                        Onedicts['op']='single-edit'
+                        userrowindex=int(raw_input('input the row number for edits, row number starts from 0:'))
+                        usercellindex=int(raw_input('input the column number for edits:'))
+                        # get the original cell
+                        useroldcell=OR.get_single_cell_value(projectID,usercellindex,userrowindex)
+                        usernewcell=raw_input('input the new cell:')
+                        edit=[{'from': useroldcell, 'to':usernewcell}]
+                        '''
+                        type choice:
+                        number
+                        boolean
+                        date
+                        default=String
+                        '''
+                        usertype=raw_input('input the value type:')
+                        Onedicts['description']='Edit single cell on row %s, column %s'%(userrowindex,usercolumn)
+                        Onedicts['columnName']='%s'%usercolumn
+                        Onedicts['rowIndex']=userrowindex
+                        Onedicts['cellIndex']=usercellindex
+                        Onedicts['type']=usertype
+                        Onedicts['edit']=edit
+                        # do operation
+                        OR.single_edit(projectID,userrowindex,usercellindex,usertype,usernewcell)
+
+                        # retrospective provenance
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        Onedicts['changes']='%s'%No_changes
+                        result.append(Onedicts)
+                        opindex+=1
+                    elif userOperates==5:
+                        stardicts=OrderedDict()
+                        stardicts['op']='star-row'
+                        stardicts['description']='Star this row'
+                        rowindex=int(raw_input('input the row number, row number starts from 0:'))
+                        stardicts['rowIndex']=rowindex
+                        OR.star_row(projectID,rowindex,starred=True)
+
+                        # retrospective provenance
+                        No_changes=OR.returnRetro_Description(projectID,opindex)
+                        stardicts['changes']='%s'%No_changes
+                        result.append(stardicts)
+                        opindex+=1
+                    elif userOperates==6:
                         if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                             break
                 usercolumn=CheckColumnName('Data Cleaning',projectID)

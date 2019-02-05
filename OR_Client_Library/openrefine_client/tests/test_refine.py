@@ -12,8 +12,9 @@ OPENREFINE_HOST and OPENREFINE_PORT.
 import csv
 import unittest
 
-from google.refine import refine
-from tests import refinetest
+from OR_Client_Library.openrefine_client.google.refine import refine
+from OR_Client_Library.openrefine_client.tests import refinetest
+
 
 
 class RefineServerTest(refinetest.RefineTestCase):
