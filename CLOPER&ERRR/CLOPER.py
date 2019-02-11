@@ -167,6 +167,7 @@ def main():
                         'Split multi-valued cells in column ',
                         'Single Edit cell',
                         'star the row',
+                        'Column Addition',
                         'Exit this column',
                     ])
                     if userOperates==1:
