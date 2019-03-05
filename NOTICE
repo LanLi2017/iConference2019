@@ -1,0 +1,39 @@
+Copyright and license notices for third-party dependencies:
+
+-------------------------------------------------------------------------------
+
+                      Permission Notice
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTA-
+BILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+CLOPER&ER3 use the opencultureconsulting/openrefine-client (https://github.com/opencultureconsulting/openrefine-client)
+library for interacting with OpenRefine server. A binary distribution of openrefine-client library is included in CLOPER&ER3.See the
+copyright and GNU GENERAL PUBLIC LICENSE for openrefine-client at:
+https://github.com/opencultureconsulting/openrefine-client/blob/master/COPYING.txt
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+CLOPER&ER3 depends indirectly on the PaulMakepeace/refine-client-py (https://github.com/PaulMakepeace/refine-client-py) library. The
+copyright and GNU GENERAL PUBLIC LICENSE for refine-client-py may be found at:
+
+https://github.com/PaulMakepeace/refine-client-py/blob/master/COPYING.txt
+
+-------------------------------------------------------------------------------
