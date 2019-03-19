@@ -271,7 +271,7 @@ def main():
                         opindex+=1
 
 
-                    elif userOperates==2:
+                    elif userOperates==3:
                         while True:
                             text_expression=[
                                 'Trim leading and trailing whitespace',
@@ -335,7 +335,7 @@ def main():
                             result.append(text_transform)
 
 
-                    elif userOperates==3:
+                    elif userOperates==4:
                         Splitdicts=OrderedDict()
                         Splitdicts['op']='core/column-split'
                         Splitdicts['description']='Split column %s by separator'%usercolumn
@@ -368,7 +368,7 @@ def main():
                         opindex+=1
                         # something special here
                         # if split into several columns, then usercolumn will change
-                    elif userOperates==4:
+                    elif userOperates==5:
                         Onedicts=OrderedDict()
                         Onedicts['op']='single-edit'
                         userrowindex=int(raw_input('input the row number for edits, row number starts from 0:'))
@@ -399,7 +399,7 @@ def main():
                         Onedicts['changes']='%s'%No_changes
                         result.append(Onedicts)
                         opindex+=1
-                    elif userOperates==5:
+                    elif userOperates==6:
                         stardicts=OrderedDict()
                         stardicts['op']='star-row'
                         stardicts['description']='Star this row'
@@ -412,7 +412,7 @@ def main():
                         stardicts['changes']='%s'%No_changes
                         result.append(stardicts)
                         opindex+=1
-                    elif userOperates==6:
+                    elif userOperates==7:
                         if Confirm("Are you sure to stop doing Data Wrangling?",default=False):
                             break
                 usercolumn=CheckColumnName('Data Cleaning',projectID)
